@@ -1,12 +1,11 @@
 export const formatInr = (amount: number) =>
   `₹${amount.toLocaleString('en-IN')}`;
 
-// Truncates (does not round) so 9.959k stays 9.95k.
+// Truncates (does not round) so 9.959k stays 9.95k. Do not strip zeros on 10.
 const formatUpToTwoDecimals = (value: number) => {
   const [whole, fraction = ''] = String(value).split('.');
-  const decimals = fraction.slice(0, 2);
-  const formatted = decimals ? `${whole}.${decimals}` : whole;
-  return formatted.replace(/\.?0+$/, '');
+  const decimals = fraction.slice(0, 2).replace(/0+$/, '');
+  return decimals ? `${whole}.${decimals}` : whole;
 };
 
 // Compact INR for tiles and stats: k / L / Cr after 3+ digits.
