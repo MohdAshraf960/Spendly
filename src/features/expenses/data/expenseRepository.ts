@@ -1,5 +1,10 @@
 import {getRealm} from '../../../core/database/realm';
-import type {CreateExpenseInput, Expense, StoredCategory} from './types';
+import type {
+  CreateExpenseInput,
+  Expense,
+  ExpenseQuery,
+  StoredCategory,
+} from './types';
 
 type RealmCategory = {
   id: string;
@@ -38,6 +43,51 @@ const toExpense = (expense: RealmExpense): Expense => ({
   note: expense.note,
   createdAt: new Date(expense.createdAt),
 });
+
+const startOfDay = (date: Date) => {
+  const next = new Date(date);
+  next.setHours(0, 0, 0, 0);
+  return next;
+};
+
+const endOfDay = (date: Date) => {
+  const next = new Date(date);
+  next.setHours(23, 59, 59, 999);
+  return next;
+};
+
+const queryExpenses = (query: ExpenseQuery = {}) => {
+  let results = getRealm().objects<RealmExpense>('Expense');
+  const clauses: string[] = [];
+  const args: unknown[] = [];
+
+  const search = query.search?.trim();
+  if (search) {
+    clauses.push(`title CONTAINS[c] $${args.length}`);
+    args.push(search);
+  }
+
+  if (query.categoryIds?.length) {
+    clauses.push(`category.id IN $${args.length}`);
+    args.push(query.categoryIds);
+  }
+
+  if (query.fromDate) {
+    clauses.push(`date >= $${args.length}`);
+    args.push(startOfDay(query.fromDate));
+  }
+
+  if (query.endDate) {
+    clauses.push(`date <= $${args.length}`);
+    args.push(endOfDay(query.endDate));
+  }
+
+  if (clauses.length) {
+    results = results.filtered(clauses.join(' AND '), ...args);
+  }
+
+  return results.sorted('createdAt', true);
+};
 
 // Offline ledger writes. Home subscribes so new saves appear immediately.
 export class ExpenseRepository {
@@ -108,17 +158,19 @@ export class ExpenseRepository {
   }
 
   getAllLatestFirst(): Expense[] {
-    return getRealm()
-      .objects<RealmExpense>('Expense')
-      .sorted('createdAt', true)
-      .map(toExpense);
+    return this.getLatestFirst();
+  }
+
+  getLatestFirst(query: ExpenseQuery = {}): Expense[] {
+    return queryExpenses(query).map(toExpense);
   }
 
   // Realm fires immediately and on every write. Caller must unsubscribe.
-  subscribe(onChange: (expenses: Expense[]) => void) {
-    const results = getRealm()
-      .objects<RealmExpense>('Expense')
-      .sorted('createdAt', true);
+  subscribe(
+    onChange: (expenses: Expense[]) => void,
+    query: ExpenseQuery = {},
+  ) {
+    const results = queryExpenses(query);
 
     const listener = () => {
       onChange(results.map(toExpense));

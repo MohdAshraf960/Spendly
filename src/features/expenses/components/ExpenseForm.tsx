@@ -1,5 +1,12 @@
-import {useLayoutEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -73,6 +80,12 @@ const ExpenseForm = ({
   const pageStyle = usePageStyle();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
+  const noteY = useRef(0);
+  const noteHeight = useRef(0);
+  const scrollViewHeight = useRef(0);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [noteFocused, setNoteFocused] = useState(false);
   const [category, setCategory] = useState<Category | undefined>(
     initialCategory,
   );
@@ -97,6 +110,47 @@ const ExpenseForm = ({
             : 'Add Expense',
     });
   }, [isIncome, mode, navigation]);
+
+  // Android adjustResize still leaves the last field under the pinned footer.
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const show = Keyboard.addListener(showEvent, event => {
+      setKeyboardHeight(event.endCoordinates.height);
+    });
+    const hide = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
+
+  const scrollNoteIntoView = () => {
+    const visibleHeight = scrollViewHeight.current;
+    if (!visibleHeight) {
+      return;
+    }
+
+    const fieldBottom = noteY.current + noteHeight.current;
+    const target = fieldBottom - visibleHeight + spacing[4];
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, target),
+      animated: true,
+    });
+  };
+
+  useEffect(() => {
+    if (!noteFocused) {
+      return;
+    }
+
+    const timeout = setTimeout(scrollNoteIntoView, 80);
+    return () => clearTimeout(timeout);
+  }, [keyboardHeight, noteFocused]);
 
   const clearError = (field: keyof AddExpenseErrors) => {
     if (errors[field]) {
@@ -167,9 +221,25 @@ const ExpenseForm = ({
 
   return (
     <View style={[pageStyle.page, styles.page]}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior="padding"
+        keyboardVerticalOffset={layout.headerHeight + insets.top}>
       <ScrollView
-        contentContainerStyle={[pageStyle.content, styles.content]}
-        keyboardShouldPersistTaps="handled">
+        ref={scrollRef}
+        onLayout={event => {
+          scrollViewHeight.current = event.nativeEvent.layout.height;
+        }}
+        contentContainerStyle={[
+          pageStyle.content,
+          styles.content,
+          {
+            paddingBottom:
+              spacing[4] + (keyboardHeight > 0 ? spacing[6] : 0),
+          },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag">
         <ExpenseTitleField
           label={isIncome ? 'Income Title' : 'Expense Title'}
           placeholder={isIncome ? 'Income title' : 'Expense title'}
@@ -204,17 +274,25 @@ const ExpenseForm = ({
           }}
         />
         <DatePickerField value={expenseDate} onChange={setExpenseDate} />
-        <ExpenseTitleField
-          label="Personal Note"
-          hint="OPTIONAL"
-          required={false}
-          icon="document-text-outline"
-          placeholder="Add a note"
-          autoCapitalize="sentences"
-          multiline
-          value={note}
-          onChangeText={setNote}
-        />
+        <View
+          onLayout={event => {
+            noteY.current = event.nativeEvent.layout.y;
+            noteHeight.current = event.nativeEvent.layout.height;
+          }}>
+          <ExpenseTitleField
+            label="Personal Note"
+            hint="OPTIONAL"
+            required={false}
+            icon="document-text-outline"
+            placeholder="Add a note"
+            autoCapitalize="sentences"
+            multiline
+            value={note}
+            onChangeText={setNote}
+            onFocus={() => setNoteFocused(true)}
+            onBlur={() => setNoteFocused(false)}
+          />
+        </View>
       </ScrollView>
       <View
         style={[
@@ -234,6 +312,7 @@ const ExpenseForm = ({
           style={styles.footerButton}
         />
       </View>
+      </KeyboardAvoidingView>
       <FeedbackDialog
         visible={Boolean(feedback)}
         variant={feedback?.variant ?? 'success'}
@@ -249,6 +328,9 @@ const ExpenseForm = ({
 const styles = StyleSheet.create({
   page: {
     backgroundColor: colors.background,
+  },
+  flex: {
+    flex: 1,
   },
   content: {
     paddingTop: spacing[4],

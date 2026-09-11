@@ -1,4 +1,6 @@
+import {useEffect, useState} from 'react';
 import {isIncomeCategory} from '../../../shared/data/categories';
+import {expenseRepository} from '../../expenses/data/expenseRepository';
 import type {Expense} from '../../expenses/data';
 import type {HomeStats} from '../types';
 
@@ -23,4 +25,17 @@ export const getHomeStats = (expenses: Expense[]): HomeStats => {
     thisMonthTotal: sumAmounts(thisMonthSpending),
     transactionCount: expenses.length,
   };
+};
+
+// Overview cards always use the full ledger, not the active search query.
+export const useLedgerStats = () => {
+  const [stats, setStats] = useState<HomeStats>(() => getHomeStats([]));
+
+  useEffect(() => {
+    const apply = (items: Expense[]) => setStats(getHomeStats(items));
+    apply(expenseRepository.getAllLatestFirst());
+    return expenseRepository.subscribe(apply);
+  }, []);
+
+  return stats;
 };

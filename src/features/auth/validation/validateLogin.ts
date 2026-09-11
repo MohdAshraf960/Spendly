@@ -1,6 +1,6 @@
 // Login field rules. Returns a message or undefined when valid.
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 6;
 
 export const validateEmail = (value: string): string | undefined => {
   const email = value.trim();

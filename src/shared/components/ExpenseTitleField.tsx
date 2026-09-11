@@ -21,6 +21,8 @@ export type ExpenseTitleFieldProps = {
   multiline?: boolean;
   maxLength?: number;
   error?: string;
+  onFocus?: TextInputProps['onFocus'];
+  onBlur?: TextInputProps['onBlur'];
 };
 
 const ExpenseTitleField = ({
@@ -37,6 +39,8 @@ const ExpenseTitleField = ({
   multiline = false,
   maxLength,
   error,
+  onFocus,
+  onBlur,
 }: ExpenseTitleFieldProps) => {
   return (
     <FormFieldCard label={label} hint={hint} required={required} error={error}>
@@ -62,6 +66,8 @@ const ExpenseTitleField = ({
           keyboardType={keyboardType}
           multiline={multiline}
           maxLength={maxLength}
+          onFocus={onFocus}
+          onBlur={onBlur}
           returnKeyType={multiline ? 'default' : 'done'}
           textAlignVertical={multiline ? 'top' : 'center'}
           underlineColorAndroid={colors.transparent}

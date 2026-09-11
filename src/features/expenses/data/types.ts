@@ -13,6 +13,14 @@ export type Expense = {
   createdAt: Date;
 };
 
+// Realm list query. Dates are applied inclusive of the selected day.
+export type ExpenseQuery = {
+  search?: string;
+  categoryIds?: string[];
+  fromDate?: Date;
+  endDate?: Date;
+};
+
 export type CreateExpenseInput = {
   title: string;
   amount: number;

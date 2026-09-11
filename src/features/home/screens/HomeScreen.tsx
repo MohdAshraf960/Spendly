@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useMemo, useState} from 'react';
+import {useEffect, useLayoutEffect, useState} from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -26,12 +26,11 @@ import StatCard from '../components/StatCard';
 import StatCardShimmer from '../components/StatCardShimmer';
 import {
   EMPTY_HOME_FILTERS,
-  filterExpenses,
   hasActiveHomeFilters,
   type HomeFilters,
 } from '../filters';
 import useDebouncedSearch from '../hooks/useDebouncedSearch';
-import {getHomeStats} from '../hooks/useHomeStats';
+import {useLedgerStats} from '../hooks/useHomeStats';
 import usePagedList from '../hooks/usePagedList';
 
 const noExpenseIcon = require('../../../../assets/icons/no_expense_icon.png');
@@ -47,12 +46,18 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
   const [expenseToDelete, setExpenseToDelete] = useState<Expense>();
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-  const {expenses, loading, error} = useExpenses();
+  const filtersActive = hasActiveHomeFilters(filters);
+  const activeSearch = useDebouncedSearch(searchQuery);
+  const {expenses, loading, error} = useExpenses({
+    search: activeSearch,
+    categoryIds: filters.categoryIds,
+    fromDate: filters.fromDate,
+    endDate: filters.endDate,
+  });
   const {deleteExpense} = useDeleteExpense();
   const user = useCurrentUser();
   const {logout} = useLogout();
-  const {allTimeTotal, thisMonthTotal, transactionCount} =
-    getHomeStats(expenses);
+  const {allTimeTotal, thisMonthTotal, transactionCount} = useLedgerStats();
 
   useEffect(() => {
     if (error) {
@@ -98,13 +103,8 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
   });
   const currentMonth = new Date().toLocaleString('en-IN', {month: 'long'});
 
-  const filtersActive = hasActiveHomeFilters(filters);
-  const activeSearch = useDebouncedSearch(searchQuery);
-  const filteredExpenses = useMemo(
-    () => filterExpenses(expenses, activeSearch, filters),
-    [expenses, activeSearch, filters],
-  );
-  const {pagedItems, hasMore, loadMore} = usePagedList(filteredExpenses);
+  const {pagedItems, hasMore, loadMore} = usePagedList(expenses);
+  const showAddFab = expenses.length > 0;
 
   const stats = [
     {
@@ -134,7 +134,11 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
         contentContainerStyle={[
           pageStyle.content,
           styles.listContent,
-          {paddingBottom: sizes.fab + spacing[10] + insets.bottom},
+          {
+            paddingBottom:
+              (showAddFab ? sizes.fab + spacing[10] : spacing[8]) +
+              insets.bottom,
+          },
         ]}
         ListHeaderComponent={
           <>
@@ -207,17 +211,18 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
           )
         }
       />
-      {/* Primary FAB replaces the old header add action. */}
-      <Pressable
-        onPress={() => navigation.navigate('AddExpense')}
-        accessibilityRole="button"
-        accessibilityLabel="Add expense"
-        style={[
-          styles.fab,
-          {bottom: Math.max(insets.bottom, spacing[4])},
-        ]}>
-        <Ionicons name="add" size={sizes.iconLg} color={colors.white} />
-      </Pressable>
+      {expenses.length > 0 ? (
+        <Pressable
+          onPress={() => navigation.navigate('AddExpense')}
+          accessibilityRole="button"
+          accessibilityLabel="Add expense"
+          style={[
+            styles.fab,
+            {bottom: Math.max(insets.bottom, spacing[4])},
+          ]}>
+          <Ionicons name="add" size={sizes.iconLg} color={colors.white} />
+        </Pressable>
+      ) : null}
       <HomeFilterSheet
         visible={filterVisible}
         filters={filters}
@@ -296,7 +301,7 @@ const styles = StyleSheet.create({
     right: layout.screenPadding,
     width: sizes.fab,
     height: sizes.fab,
-    borderRadius: radius.circle,
+    borderRadius: radius.md,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',

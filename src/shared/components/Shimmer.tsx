@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {Animated, StyleSheet, View, type StyleProp, type ViewStyle} from 'react-native';
+import {Animated, StyleSheet, View,  StyleProp,  ViewStyle} from 'react-native';
 import {colors, radius} from '../theme';
 
 // Lightweight loading bone. Width can be a number or a percent string.
