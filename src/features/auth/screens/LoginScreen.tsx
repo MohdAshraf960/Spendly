@@ -27,7 +27,7 @@ import {
 import {useLogin} from '../hooks';
 import {validateEmail, validatePassword} from '../validation/validateLogin';
 
-const splashIcon = require('../../../../assets/icons/splash_icon.png');
+const splashIcon = require('../../../../assets/icons/splash_icon.webp');
 
 // Email + password create or restore the local session, then open Home.
 const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {

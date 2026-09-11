@@ -7,7 +7,7 @@ import {colors, radius, sizes, spacing, typography} from '../theme';
 import {formatExpenseDateTitle, formatExpenseTime} from '../utils/formatDate';
 import FormFieldCard from './FormFieldCard';
 
-const datePickerIcon = require('../../../assets/categories/date_picker.png');
+const datePickerIcon = require('../../../assets/categories/date_picker.webp');
 
 // Native date/time picker. Android uses a dialog; iOS uses an inline sheet.
 export type DatePickerFieldProps = {

@@ -33,8 +33,8 @@ import useDebouncedSearch from '../hooks/useDebouncedSearch';
 import {useLedgerStats} from '../hooks/useHomeStats';
 import usePagedList from '../hooks/usePagedList';
 
-const noExpenseIcon = require('../../../../assets/icons/no_expense_icon.png');
-const noSearchFoundIcon = require('../../../../assets/icons/no_search_found.png');
+const noExpenseIcon = require('../../../../assets/icons/no_expense_icon.webp');
+const noSearchFoundIcon = require('../../../../assets/icons/no_search_found.webp');
 
 // Ledger home: stats, search/filter, paged list, FAB to add, logout in the header.
 const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {

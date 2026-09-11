@@ -5,7 +5,7 @@ import {userRepository} from '../../auth';
 import {usePageStyle} from '../../../shared/hooks';
 import {colors, spacing, typography} from '../../../shared/theme';
 
-const splashIcon = require('../../../../assets/icons/splash_icon.png');
+const splashIcon = require('../../../../assets/icons/splash_icon.webp');
 
 // Brief brand hold, then skip Login if a local session already exists.
 const SplashScreen = ({navigation}: RootStackScreenProps<'Splash'>) => {
