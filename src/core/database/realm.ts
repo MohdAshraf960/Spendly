@@ -5,7 +5,7 @@ import {UserSchema} from '../../features/auth/data/schemas';
 
 const realmConfig: Realm.Configuration = {
   schema: [CategorySchema, ExpenseSchema, UserSchema],
-  schemaVersion: 3,
+  schemaVersion: 4,
 };
 
 let realm: Realm | undefined;

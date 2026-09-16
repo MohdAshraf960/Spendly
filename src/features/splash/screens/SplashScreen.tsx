@@ -20,8 +20,7 @@ const SplashScreen = ({navigation}: RootStackScreenProps<'Splash'>) => {
     );
 
     const refresh = async () => {
-      const current = userRepository.getCurrent();
-      if (current?.provider !== 'google') {
+      if (!userRepository.getCurrent()) {
         return;
       }
       const profile = await refreshGoogleSession();

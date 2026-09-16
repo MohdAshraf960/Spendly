@@ -1,15 +1,13 @@
 import {getRealm} from '../../../core/database/realm';
-import type {AuthProvider, GoogleProfile, LoginInput, User} from './types';
+import type {GoogleProfile, User} from './types';
 
 type RealmUser = {
   _id: string;
   email: string;
-  provider: AuthProvider;
   name?: string;
   photo?: string;
   googleId?: string;
   idToken?: string;
-  password?: string;
   createdAt: Date;
 };
 
@@ -19,12 +17,10 @@ const CURRENT_USER_ID = 'current';
 const toUser = (user: RealmUser): User => ({
   id: user._id,
   email: user.email,
-  provider: user.provider,
   name: user.name,
   photo: user.photo,
   googleId: user.googleId,
   idToken: user.idToken,
-  password: user.password,
   createdAt: new Date(user.createdAt),
 });
 
@@ -38,21 +34,10 @@ export class UserRepository {
     return user ? toUser(user) : undefined;
   }
 
-  // Email/password session.
-  login({email, password}: LoginInput): User {
-    return this.createSession({
-      email,
-      password,
-      provider: 'password',
-      createdAt: new Date(),
-    });
-  }
-
   // Google session. Stores the profile and latest ID token.
   loginWithGoogle(profile: GoogleProfile): User {
     return this.createSession({
       email: profile.email,
-      provider: 'google',
       name: profile.name,
       photo: profile.photo,
       googleId: profile.googleId,
