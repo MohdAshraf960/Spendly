@@ -1,4 +1,4 @@
-// Local session user. Password is stored as entered (offline-only app).
+// Local session user. Google-only sign-in: stores the profile + latest ID token.
 import type {ObjectSchema} from 'realm';
 
 export const UserSchema: ObjectSchema = {
@@ -7,7 +7,10 @@ export const UserSchema: ObjectSchema = {
   properties: {
     _id: 'string',
     email: 'string',
-    password: 'string',
+    name: 'string?',
+    photo: 'string?',
+    googleId: 'string?',
+    idToken: 'string?',
     createdAt: 'date',
   },
 };

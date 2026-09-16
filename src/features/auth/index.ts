@@ -1,4 +1,9 @@
-// Auth feature public API: session repo, hooks, and Login screen.
+// Auth feature public API: session repo, services, hooks, and Login screen.
 export {userRepository} from './data';
-export {useCurrentUser, useLogout} from './hooks';
+export {
+  configureGoogleSignIn,
+  refreshGoogleSession,
+  signOutFromGoogle,
+} from './services';
+export {useCurrentUser, useGoogleSignIn, useLogout} from './hooks';
 export {default as LoginScreen} from './screens/LoginScreen';

@@ -1,10 +1,13 @@
 import {getRealm} from '../../../core/database/realm';
-import type {LoginInput, User} from './types';
+import type {GoogleProfile, User} from './types';
 
 type RealmUser = {
   _id: string;
   email: string;
-  password: string;
+  name?: string;
+  photo?: string;
+  googleId?: string;
+  idToken?: string;
   createdAt: Date;
 };
 
@@ -14,7 +17,10 @@ const CURRENT_USER_ID = 'current';
 const toUser = (user: RealmUser): User => ({
   id: user._id,
   email: user.email,
-  password: user.password,
+  name: user.name,
+  photo: user.photo,
+  googleId: user.googleId,
+  idToken: user.idToken,
   createdAt: new Date(user.createdAt),
 });
 
@@ -28,27 +34,31 @@ export class UserRepository {
     return user ? toUser(user) : undefined;
   }
 
-  login({email, password}: LoginInput): User {
-    const realm = getRealm();
-    const createdAt = new Date();
-
-    realm.write(() => {
-      const existing = realm.objects('User');
-      realm.delete(existing);
-      realm.create<RealmUser>('User', {
-        _id: CURRENT_USER_ID,
-        email,
-        password,
-        createdAt,
-      });
+  // Google session. Stores the profile and latest ID token.
+  loginWithGoogle(profile: GoogleProfile): User {
+    return this.createSession({
+      email: profile.email,
+      name: profile.name,
+      photo: profile.photo,
+      googleId: profile.googleId,
+      idToken: profile.idToken,
+      createdAt: new Date(),
     });
+  }
 
-    return {
-      id: CURRENT_USER_ID,
-      email,
-      password,
-      createdAt,
-    };
+  // Refreshes only the stored ID token for the active session (silent refresh).
+  updateSessionTokens(idToken?: string) {
+    const realm = getRealm();
+    const existing = realm.objectForPrimaryKey<RealmUser>(
+      'User',
+      CURRENT_USER_ID,
+    );
+    if (!existing) {
+      return;
+    }
+    realm.write(() => {
+      existing.idToken = idToken;
+    });
   }
 
   // Clears the whole Realm so the next login starts with an empty ledger.
@@ -57,6 +67,19 @@ export class UserRepository {
     realm.write(() => {
       realm.deleteAll();
     });
+  }
+
+  private createSession(record: Omit<RealmUser, '_id'>): User {
+    const realm = getRealm();
+    let created!: RealmUser;
+    realm.write(() => {
+      realm.delete(realm.objects('User'));
+      created = realm.create<RealmUser>('User', {
+        _id: CURRENT_USER_ID,
+        ...record,
+      });
+    });
+    return toUser(created);
   }
 }
 

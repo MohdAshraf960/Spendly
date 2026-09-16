@@ -1,13 +1,15 @@
 import {useCallback, useState} from 'react';
 import {userRepository} from '../data/userRepository';
+import {signOutFromGoogle} from '../services/googleAuth';
 
-// Wipes local user and expenses, then the screen resets to Login.
+// Revokes + signs out of Google, then wipes local user + expenses.
 const useLogout = () => {
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setLoggingOut(true);
     try {
+      await signOutFromGoogle();
       userRepository.logout();
     } finally {
       setLoggingOut(false);

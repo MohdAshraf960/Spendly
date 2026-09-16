@@ -2,11 +2,19 @@
 export type User = {
   id: string;
   email: string;
-  password: string;
+  name?: string;
+  photo?: string;
+  googleId?: string;
+  // Latest Google ID token for the active session (refreshed on app start).
+  idToken?: string;
   createdAt: Date;
 };
 
-export type LoginInput = {
+// Normalised profile returned by the Google Sign-In SDK.
+export type GoogleProfile = {
+  googleId: string;
   email: string;
-  password: string;
+  name?: string;
+  photo?: string;
+  idToken?: string;
 };
