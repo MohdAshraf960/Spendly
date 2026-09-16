@@ -143,7 +143,7 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
         ListHeaderComponent={
           <>
             <Text style={styles.welcome} numberOfLines={1}>
-              Welcome {user?.email ?? 'there'}
+              Welcome {user?.name ?? user?.email ?? 'there'}
             </Text>
             <View style={styles.summary}>
               <Text style={styles.summaryKicker}>SUMMARY ANALYTICS</Text>
@@ -234,11 +234,11 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
       />
       <LogoutConfirmSheet
         visible={logoutVisible}
-        email={user?.email}
+        email={user?.name ?? user?.email}
         onClose={() => setLogoutVisible(false)}
-        onConfirm={() => {
+        onConfirm={async () => {
           try {
-            logout();
+            await logout();
             setLogoutVisible(false);
             navigation.reset({
               index: 0,

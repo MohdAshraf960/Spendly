@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -17,6 +18,7 @@ import {Button, FeedbackDialog, TextField} from '../../../shared/components';
 import {usePageStyle} from '../../../shared/hooks';
 import {
   colors,
+  componentTheme,
   layout,
   radius,
   shadows,
@@ -24,7 +26,7 @@ import {
   spacing,
   typography,
 } from '../../../shared/theme';
-import {useLogin} from '../hooks';
+import {useGoogleSignIn, useLogin} from '../hooks';
 import {validateEmail, validatePassword} from '../validation/validateLogin';
 
 const splashIcon = require('../../../../assets/icons/splash_icon.webp');
@@ -42,6 +44,7 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const {login, saving} = useLogin();
+  const {signInWithGoogle, signing} = useGoogleSignIn();
 
   const showEmailError = (value: string) => {
     const nextError = validateEmail(value);
@@ -89,7 +92,23 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
     }
   };
 
-  const canContinue = Boolean(email.trim() && password) && !saving;
+  const handleGoogleContinue = async () => {
+    try {
+      const user = await signInWithGoogle();
+      if (user) {
+        navigation.replace('Home');
+      }
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Something went wrong while signing in with Google. Please try again.',
+      );
+    }
+  };
+
+  const busy = saving || signing;
+  const canContinue = Boolean(email.trim() && password) && !busy;
 
   // Android does not adjust for the keyboard; extra bottom padding is added instead.
   useEffect(() => {
@@ -205,7 +224,47 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
               title="Continue"
               onPress={handleContinue}
               disabled={!canContinue}
+              icon={
+                <Ionicons
+                  name="arrow-forward"
+                  size={sizes.iconSm}
+                  color={colors.white}
+                />
+              }
+              iconPosition="right"
             />
+
+            <View style={styles.dividerRow}>
+              <View style={styles.divider} />
+              <Text style={styles.dividerLabel}>OR</Text>
+              <View style={styles.divider} />
+            </View>
+
+            <Pressable
+              onPress={handleGoogleContinue}
+              disabled={busy}
+              accessibilityRole="button"
+              accessibilityLabel="Continue with Google"
+              accessibilityState={{disabled: busy}}
+              style={({pressed}) => [
+                styles.googleButton,
+                busy && styles.googleButtonDisabled,
+                pressed && !busy && styles.googleButtonPressed,
+              ]}>
+              {signing ? (
+                <ActivityIndicator color={colors.text} />
+              ) : (
+                <>
+                  <Ionicons
+                    name="logo-google"
+                    size={sizes.iconMd}
+                    color="#4285F4"
+                    style={styles.googleIcon}
+                  />
+                  <Text style={styles.googleLabel}>Continue with Google</Text>
+                </>
+              )}
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -270,6 +329,43 @@ const styles = StyleSheet.create({
     padding: spacing[5],
     gap: spacing[5],
     ...shadows.medium,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[3],
+  },
+  divider: {
+    flex: 1,
+    height: sizes.border,
+    backgroundColor: colors.borderLight,
+  },
+  dividerLabel: {
+    ...typography.label,
+    color: colors.textTertiary,
+  },
+  googleButton: {
+    height: componentTheme.button.height,
+    borderRadius: componentTheme.button.radius,
+    borderWidth: sizes.border,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  googleButtonDisabled: {
+    opacity: 0.6,
+  },
+  googleButtonPressed: {
+    backgroundColor: colors.backgroundSecondary,
+  },
+  googleIcon: {
+    marginRight: spacing[2],
+  },
+  googleLabel: {
+    ...typography.button,
+    color: colors.text,
   },
 });
 
