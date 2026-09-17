@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {colors, radius, spacing, typography} from '../theme';
+import {radius, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 
 // Card wrapper for labeled form fields. Uses boxShadow, not Android elevation.
 export type FormFieldCardProps = {
@@ -18,18 +19,19 @@ const FormFieldCard = ({
   error,
   children,
 }: FormFieldCardProps) => {
+  const {colors} = useTheme();
   return (
-    <View style={styles.shadow}>
-      <View style={styles.card}>
+    <View style={[styles.shadow, {backgroundColor: colors.surface}]}>
+      <View style={[styles.card, {backgroundColor: colors.surface}]}>
         <View style={styles.header}>
-          <Text style={styles.label}>
+          <Text style={[styles.label, {color: colors.textSecondary}]}>
             {label}
-            {required ? <Text style={styles.asterisk}> *</Text> : null}
+            {required ? <Text style={{color: colors.primaryLight}}> *</Text> : null}
           </Text>
-          <Text style={styles.hint}>{hint}</Text>
+          <Text style={[styles.hint, {color: colors.primaryLight}]}>{hint}</Text>
         </View>
         {children}
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={[styles.error, {color: colors.error}]}>{error}</Text> : null}
       </View>
     </View>
   );
@@ -37,7 +39,6 @@ const FormFieldCard = ({
 
 const styles = StyleSheet.create({
   shadow: {
-    backgroundColor: colors.surface,
     borderRadius: radius.md,
     boxShadow: [
       {
@@ -50,7 +51,6 @@ const styles = StyleSheet.create({
     ],
   },
   card: {
-    backgroundColor: colors.surface,
     borderRadius: radius.md,
     overflow: 'hidden',
     padding: spacing[4],
@@ -63,18 +63,12 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.label,
-    color: colors.textSecondary,
-  },
-  asterisk: {
-    color: colors.primaryLight,
   },
   hint: {
     ...typography.label,
-    color: colors.primaryLight,
   },
   error: {
     ...typography.caption,
-    color: colors.error,
     marginTop: spacing[2],
   },
 });

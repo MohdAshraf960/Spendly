@@ -4,7 +4,8 @@ import type {RootStackScreenProps} from '../../../navigation/types';
 import {usePageStyle} from '../../../hooks';
 import {userRepository} from '../../../repositories';
 import {refreshGoogleSession} from '../../../services';
-import {colors, spacing, typography} from '../../../shared/theme';
+import {spacing, typography} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 const splashIcon = require('../../../../assets/icons/splash_icon.webp');
 const MIN_BRAND_HOLD_MS = 1600;
@@ -13,6 +14,7 @@ const MIN_BRAND_HOLD_MS = 1600;
 // Google sessions are silently refreshed here so the stored token stays valid.
 const SplashScreen = ({navigation}: RootStackScreenProps<'Splash'>) => {
   const pageStyle = usePageStyle();
+  const {colors} = useTheme();
 
   useEffect(() => {
     let cancelled = false;
@@ -50,8 +52,8 @@ const SplashScreen = ({navigation}: RootStackScreenProps<'Splash'>) => {
         resizeMode="contain"
         accessibilityLabel="Spendly"
       />
-      <Text style={styles.appName}>Spendly</Text>
-      <Text style={styles.tagline}>
+      <Text style={[styles.appName, {color: colors.text}]}>Spendly</Text>
+      <Text style={[styles.tagline, {color: colors.textSecondary}]}>
         Understand your spending.{'\n'}Take absolute control.
       </Text>
     </View>
@@ -70,13 +72,11 @@ const styles = StyleSheet.create({
   },
   appName: {
     ...typography.display,
-    color: colors.text,
     textAlign: 'center',
     marginTop: spacing[4],
   },
   tagline: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing[2],
   },

@@ -11,6 +11,7 @@ export const UserSchema: ObjectSchema = {
     photo: 'string?',
     googleId: 'string?',
     idToken: 'string?',
+    themePreference: 'string?',
     createdAt: 'date',
   },
 };

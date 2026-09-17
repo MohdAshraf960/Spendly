@@ -4,18 +4,22 @@ import {
   GoogleSignInCancelledError,
   signInWithGoogle,
 } from '../services/googleAuth';
+import {useTheme} from '../shared/context';
 import type {User} from '../types/user';
 
 // Runs the interactive Google flow, then persists the session locally.
 // Resolves to `undefined` when the user cancels the account picker.
 const useGoogleSignIn = () => {
   const [signing, setSigning] = useState(false);
+  const {refreshThemePreference} = useTheme();
 
   const signIn = useCallback(async (): Promise<User | undefined> => {
     setSigning(true);
     try {
       const profile = await signInWithGoogle();
-      return userRepository.loginWithGoogle(profile);
+      const user = userRepository.loginWithGoogle(profile);
+      refreshThemePreference();
+      return user;
     } catch (error) {
       if (error instanceof GoogleSignInCancelledError) {
         return undefined;
@@ -24,7 +28,7 @@ const useGoogleSignIn = () => {
     } finally {
       setSigning(false);
     }
-  }, []);
+  }, [refreshThemePreference]);
 
   return {signInWithGoogle: signIn, signing};
 };

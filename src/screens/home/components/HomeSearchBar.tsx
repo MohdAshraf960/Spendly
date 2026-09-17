@@ -3,13 +3,13 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
 import {TextField} from '../../../shared/components';
 import {
-  colors,
   componentTheme,
   radius,
   shadows,
   sizes,
   spacing,
 } from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 type HomeSearchBarProps = {
   value: string;
@@ -24,6 +24,8 @@ const HomeSearchBar = ({
   onFilterPress,
   filterActive = false,
 }: HomeSearchBarProps) => {
+  const {colors} = useTheme();
+
   return (
     <View style={styles.row}>
       <TextField
@@ -34,7 +36,7 @@ const HomeSearchBar = ({
         autoCorrect={false}
         returnKeyType="search"
         containerStyle={styles.field}
-        fieldStyle={styles.input}
+        fieldStyle={[styles.input, {borderColor: colors.borderLight}]}
         prefix={
           <Ionicons
             name="search-outline"
@@ -62,13 +64,15 @@ const HomeSearchBar = ({
         onPress={onFilterPress}
         accessibilityRole="button"
         accessibilityLabel="Filter transactions"
-        style={styles.filterButton}>
+        style={[styles.filterButton, {backgroundColor: colors.primary}]}>
         <Ionicons
           name="options-outline"
           size={sizes.iconMd}
           color={colors.white}
         />
-        {filterActive ? <View style={styles.filterDot} /> : null}
+        {filterActive ? (
+          <View style={[styles.filterDot, {backgroundColor: colors.warning}]} />
+        ) : null}
       </Pressable>
     </View>
   );
@@ -86,13 +90,11 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: componentTheme.input.radius,
-    borderColor: colors.borderLight,
   },
   filterButton: {
     width: componentTheme.input.height,
     height: componentTheme.input.height,
     borderRadius: componentTheme.input.radius,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.small,
@@ -104,7 +106,6 @@ const styles = StyleSheet.create({
     width: spacing[2],
     height: spacing[2],
     borderRadius: radius.circle,
-    backgroundColor: colors.warning,
   },
 });
 

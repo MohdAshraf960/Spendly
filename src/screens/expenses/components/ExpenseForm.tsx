@@ -18,7 +18,8 @@ import {
   type FeedbackDialogVariant,
 } from '../../../shared/components';
 import {usePageStyle} from '../../../hooks';
-import {colors, layout, spacing} from '../../../shared/theme';
+import {layout, spacing} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 import {isIncomeCategory, type Category} from '../../../shared/data/categories';
 import {formatInr} from '../../../shared/utils/formatCurrency';
 import {
@@ -78,9 +79,10 @@ const ExpenseForm = ({
   onSubmit,
 }: ExpenseFormProps) => {
   const pageStyle = usePageStyle();
+  const {colors} = useTheme();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<any>(null);
   const noteY = useRef(0);
   const noteHeight = useRef(0);
   const scrollViewHeight = useRef(0);
@@ -220,98 +222,101 @@ const ExpenseForm = ({
   };
 
   return (
-    <View style={[pageStyle.page, styles.page]}>
+    <View style={[pageStyle.page, {backgroundColor: colors.background}]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior="padding"
         keyboardVerticalOffset={layout.headerHeight + insets.top}>
-      <ScrollView
-        ref={scrollRef}
-        onLayout={event => {
-          scrollViewHeight.current = event.nativeEvent.layout.height;
-        }}
-        contentContainerStyle={[
-          pageStyle.content,
-          styles.content,
-          {
-            paddingBottom:
-              spacing[4] + (keyboardHeight > 0 ? spacing[6] : 0),
-          },
-        ]}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag">
-        <ExpenseTitleField
-          label={isIncome ? 'Income Title' : 'Expense Title'}
-          placeholder={isIncome ? 'Income title' : 'Expense title'}
-          value={title}
-          error={errors.title}
-          onChangeText={text => {
-            setTitle(text);
-            clearError('title');
-          }}
-        />
-        <ExpenseTitleField
-          label={isIncome ? 'Income Amount' : 'Expense Amount'}
-          hint="REQUIRED"
-          icon="cash-outline"
-          prefix="₹"
-          placeholder="0.00"
-          keyboardType="decimal-pad"
-          autoCapitalize="none"
-          value={amount}
-          error={errors.amount}
-          onChangeText={text => {
-            setAmount(sanitizeAmount(text));
-            clearError('amount');
-          }}
-        />
-        <CategoryPicker
-          selectedCategory={category}
-          error={errors.category}
-          onSelect={selected => {
-            setCategory(selected);
-            clearError('category');
-          }}
-        />
-        <DatePickerField value={expenseDate} onChange={setExpenseDate} />
-        <View
+        <ScrollView
+          ref={scrollRef}
           onLayout={event => {
-            noteY.current = event.nativeEvent.layout.y;
-            noteHeight.current = event.nativeEvent.layout.height;
-          }}>
+            scrollViewHeight.current = event.nativeEvent.layout.height;
+          }}
+          contentContainerStyle={[
+            pageStyle.content,
+            styles.content,
+            {
+              paddingBottom:
+                spacing[4] + (keyboardHeight > 0 ? spacing[6] : 0),
+            },
+          ]}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag">
           <ExpenseTitleField
-            label="Personal Note"
-            hint="OPTIONAL"
-            required={false}
-            icon="document-text-outline"
-            placeholder="Add a note"
-            autoCapitalize="sentences"
-            multiline
-            value={note}
-            onChangeText={setNote}
-            onFocus={() => setNoteFocused(true)}
-            onBlur={() => setNoteFocused(false)}
+            label={isIncome ? 'Income Title' : 'Expense Title'}
+            placeholder={isIncome ? 'Income title' : 'Expense title'}
+            value={title}
+            error={errors.title}
+            onChangeText={text => {
+              setTitle(text);
+              clearError('title');
+            }}
+          />
+          <ExpenseTitleField
+            label={isIncome ? 'Income Amount' : 'Expense Amount'}
+            hint="REQUIRED"
+            icon="cash-outline"
+            prefix="₹"
+            placeholder="0.00"
+            keyboardType="decimal-pad"
+            autoCapitalize="none"
+            value={amount}
+            error={errors.amount}
+            onChangeText={text => {
+              setAmount(sanitizeAmount(text));
+              clearError('amount');
+            }}
+          />
+          <CategoryPicker
+            selectedCategory={category}
+            error={errors.category}
+            onSelect={selected => {
+              setCategory(selected);
+              clearError('category');
+            }}
+          />
+          <DatePickerField value={expenseDate} onChange={setExpenseDate} />
+          <View
+            onLayout={event => {
+              noteY.current = event.nativeEvent.layout.y;
+              noteHeight.current = event.nativeEvent.layout.height;
+            }}>
+            <ExpenseTitleField
+              label="Personal Note"
+              hint="OPTIONAL"
+              required={false}
+              icon="document-text-outline"
+              placeholder="Add a note"
+              autoCapitalize="sentences"
+              multiline
+              value={note}
+              onChangeText={setNote}
+              onFocus={() => setNoteFocused(true)}
+              onBlur={() => setNoteFocused(false)}
+            />
+          </View>
+        </ScrollView>
+        <View
+          style={[
+            styles.footer,
+            {
+              backgroundColor: colors.background,
+              paddingBottom: Math.max(insets.bottom, spacing[4]),
+            },
+          ]}>
+          <Button
+            title="Cancel"
+            variant="outline"
+            onPress={onCancel}
+            style={styles.footerButton}
+          />
+          <Button
+            title="Save Changes"
+            onPress={handleSave}
+            disabled={saving}
+            style={styles.footerButton}
           />
         </View>
-      </ScrollView>
-      <View
-        style={[
-          styles.footer,
-          {paddingBottom: Math.max(insets.bottom, spacing[4])},
-        ]}>
-        <Button
-          title="Cancel"
-          variant="outline"
-          onPress={onCancel}
-          style={styles.footerButton}
-        />
-        <Button
-          title="Save Changes"
-          onPress={handleSave}
-          disabled={saving}
-          style={styles.footerButton}
-        />
-      </View>
       </KeyboardAvoidingView>
       <FeedbackDialog
         visible={Boolean(feedback)}
@@ -326,9 +331,6 @@ const ExpenseForm = ({
 };
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: colors.background,
-  },
   flex: {
     flex: 1,
   },
@@ -342,7 +344,6 @@ const styles = StyleSheet.create({
     gap: spacing[3],
     paddingHorizontal: layout.screenPadding,
     paddingTop: spacing[3],
-    backgroundColor: colors.background,
   },
   footerButton: {
     flex: 1,

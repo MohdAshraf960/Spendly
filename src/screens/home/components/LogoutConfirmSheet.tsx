@@ -3,7 +3,8 @@ import {Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
 import {Button} from '../../../shared/components';
-import {colors, radius, sizes, spacing, typography} from '../../../shared/theme';
+import {radius, sizes, spacing, typography} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 export type LogoutConfirmSheetProps = {
   visible: boolean;
@@ -19,6 +20,7 @@ const LogoutConfirmSheet = ({
   onClose,
 }: LogoutConfirmSheetProps) => {
   const insets = useSafeAreaInsets();
+  const {colors} = useTheme();
 
   return (
     <Modal
@@ -28,16 +30,27 @@ const LogoutConfirmSheet = ({
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={[styles.sheet, {paddingBottom: insets.bottom + spacing[4]}]}>
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.surface,
+              paddingBottom: insets.bottom + spacing[4],
+            },
+          ]}>
           <View style={styles.header}>
-            <View style={styles.iconWrap}>
+            <View
+              style={[
+                styles.iconWrap,
+                {backgroundColor: colors.errorBackground},
+              ]}>
               <Ionicons
                 name="log-out-outline"
                 size={sizes.iconSm}
                 color={colors.error}
               />
             </View>
-            <Text style={styles.title}>Log out?</Text>
+            <Text style={[styles.title, {color: colors.text}]}>Log out?</Text>
             <Pressable
               onPress={onClose}
               hitSlop={8}
@@ -50,7 +63,7 @@ const LogoutConfirmSheet = ({
               />
             </Pressable>
           </View>
-          <Text style={styles.message}>
+          <Text style={[styles.message, {color: colors.textSecondary}]}>
             {email
               ? `Are you sure you want to log out of "${email}"? This will clear your offline ledger and signed-in account from this device.`
               : 'Are you sure you want to log out? This will clear your offline ledger and signed-in account from this device.'}
@@ -72,8 +85,13 @@ const LogoutConfirmSheet = ({
             onPress={onClose}
             accessibilityRole="button"
             accessibilityLabel="Stay signed in"
-            style={styles.stayButton}>
-            <Text style={styles.stayLabel}>Stay signed in</Text>
+            style={[
+              styles.stayButton,
+              {backgroundColor: colors.backgroundSecondary},
+            ]}>
+            <Text style={[styles.stayLabel, {color: colors.text}]}>
+              Stay signed in
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -91,7 +109,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   sheet: {
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingHorizontal: spacing[4],
@@ -105,19 +122,16 @@ const styles = StyleSheet.create({
     width: sizes.avatarSm,
     height: sizes.avatarSm,
     borderRadius: radius.circle,
-    backgroundColor: colors.errorBackground,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     ...typography.title,
-    color: colors.text,
     flex: 1,
     marginHorizontal: spacing[3],
   },
   message: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
     marginTop: spacing[3],
     marginBottom: spacing[5],
   },
@@ -127,14 +141,12 @@ const styles = StyleSheet.create({
   stayButton: {
     height: sizes.button,
     borderRadius: radius.lg,
-    backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: spacing[3],
   },
   stayLabel: {
     ...typography.button,
-    color: colors.text,
   },
 });
 

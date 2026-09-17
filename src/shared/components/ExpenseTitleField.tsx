@@ -1,10 +1,11 @@
-// Reused for title, amount (₹ prefix), and optional note on the expense form.
+// Reused for title, amount (Rs prefix), and optional note on the expense form.
 import {StyleSheet, Text, TextInput, View, type TextInputProps} from 'react-native';
 import {
   Ionicons,
   type IoniconsIconName,
 } from '@react-native-vector-icons/ionicons/static';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import FormFieldCard from './FormFieldCard';
 
 export type ExpenseTitleFieldProps = {
@@ -42,13 +43,14 @@ const ExpenseTitleField = ({
   onFocus,
   onBlur,
 }: ExpenseTitleFieldProps) => {
+  const {colors} = useTheme();
   return (
     <FormFieldCard label={label} hint={hint} required={required} error={error}>
       <View
         style={[
           styles.inner,
+          {borderColor: error ? colors.error : colors.border},
           multiline && styles.innerMultiline,
-          error ? styles.innerError : null,
         ]}>
         <Ionicons
           name={icon}
@@ -56,7 +58,7 @@ const ExpenseTitleField = ({
           color={colors.textSecondary}
           style={multiline ? styles.multilineIcon : undefined}
         />
-        {prefix ? <Text style={styles.prefix}>{prefix}</Text> : null}
+        {prefix ? <Text style={[styles.prefix, {color: colors.text}]}>{prefix}</Text> : null}
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -72,7 +74,7 @@ const ExpenseTitleField = ({
           textAlignVertical={multiline ? 'top' : 'center'}
           underlineColorAndroid={colors.transparent}
           accessibilityLabel={label}
-          style={[styles.input, multiline && styles.inputMultiline]}
+          style={[styles.input, {color: colors.text}, multiline && styles.inputMultiline]}
         />
       </View>
     </FormFieldCard>
@@ -83,16 +85,12 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.transparent,
+    backgroundColor: 'transparent',
     borderWidth: sizes.border,
-    borderColor: colors.border,
     borderRadius: radius.lg,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
     gap: spacing[3],
-  },
-  innerError: {
-    borderColor: colors.error,
   },
   innerMultiline: {
     alignItems: 'flex-start',
@@ -103,12 +101,10 @@ const styles = StyleSheet.create({
   prefix: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
   },
   input: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
     flex: 1,
     padding: 0,
   },

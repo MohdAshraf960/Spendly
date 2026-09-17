@@ -1,4 +1,4 @@
-import { colors } from './colors';
+import { lightColors as colors } from './colors';
 import { radius } from './radius';
 import { sizes } from './sizes';
 

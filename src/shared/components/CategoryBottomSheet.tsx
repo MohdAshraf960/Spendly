@@ -1,6 +1,7 @@
 import {Modal, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {colors, radius, spacing, typography} from '../theme';
+import {radius, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import {CATEGORIES, type Category} from '../data/categories';
 import CategoryTile from './CategoryTile';
 
@@ -19,6 +20,7 @@ const CategoryBottomSheet = ({
   onClose,
 }: CategoryBottomSheetProps) => {
   const insets = useSafeAreaInsets();
+  const {colors} = useTheme();
 
   return (
     <Modal
@@ -28,9 +30,16 @@ const CategoryBottomSheet = ({
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={[styles.sheet, {paddingBottom: insets.bottom + spacing[4]}]}>
-          <View style={styles.handle} />
-          <Text style={styles.title}>Select category</Text>
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.surface,
+              paddingBottom: insets.bottom + spacing[4],
+            },
+          ]}>
+          <View style={[styles.handle, {backgroundColor: colors.borderLight}]} />
+          <Text style={[styles.title, {color: colors.text}]}>Select category</Text>
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.list}>
@@ -64,7 +73,6 @@ const styles = StyleSheet.create({
   },
   sheet: {
     maxHeight: '72%',
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingHorizontal: spacing[4],
@@ -75,12 +83,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: radius.pill,
-    backgroundColor: colors.borderLight,
     marginBottom: spacing[4],
   },
   title: {
     ...typography.title,
-    color: colors.text,
     marginBottom: spacing[3],
   },
   list: {

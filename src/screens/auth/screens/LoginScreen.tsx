@@ -13,7 +13,6 @@ import type {RootStackScreenProps} from '../../../navigation/types';
 import {useGoogleSignIn, usePageStyle} from '../../../hooks';
 import {FeedbackDialog} from '../../../shared/components';
 import {
-  colors,
   componentTheme,
   layout,
   radius,
@@ -22,12 +21,14 @@ import {
   spacing,
   typography,
 } from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 const splashIcon = require('../../../../assets/icons/splash_icon.webp');
 
 // Google-only sign-in. Creates the local session, then opens Home.
 const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
   const pageStyle = usePageStyle();
+  const {colors} = useTheme();
   const insets = useSafeAreaInsets();
   const [errorMessage, setErrorMessage] = useState<string>();
   const {signInWithGoogle, signing} = useGoogleSignIn();
@@ -51,29 +52,40 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
     <View
       style={[
         pageStyle.page,
-        styles.page,
-        {paddingBottom: insets.bottom + spacing[8]},
+        {
+          backgroundColor: colors.background,
+          paddingBottom: insets.bottom + spacing[8],
+        },
       ]}>
       <View style={styles.content}>
         <View style={styles.hero}>
-          <View style={styles.logoWrap}>
+          <View style={[styles.logoWrap, {backgroundColor: colors.surface}]}>
             <Image
               source={splashIcon}
               style={styles.logo}
               resizeMode="contain"
               accessibilityLabel="Spendly"
             />
-            <View style={styles.logoBadge}>
+            <View
+              style={[
+                styles.logoBadge,
+                {
+                  backgroundColor: colors.primary,
+                  borderColor: colors.background,
+                },
+              ]}>
               <Ionicons name="flash" size={10} color={colors.white} />
             </View>
           </View>
-          <Text style={styles.title}>Track your money. Simply.</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, {color: colors.text}]}>
+            Track your money. Simply.
+          </Text>
+          <Text style={[styles.subtitle, {color: colors.textSecondary}]}>
             Sign in with Google to access your offline vault.
           </Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={[styles.card, {backgroundColor: colors.surface}]}>
           <Pressable
             onPress={handleGoogleContinue}
             disabled={signing}
@@ -82,8 +94,14 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
             accessibilityState={{disabled: signing}}
             style={({pressed}) => [
               styles.googleButton,
+              {
+                borderColor: colors.border,
+                backgroundColor:
+                  pressed && !signing
+                    ? colors.backgroundSecondary
+                    : colors.surface,
+              },
               signing && styles.googleButtonDisabled,
-              pressed && !signing && styles.googleButtonPressed,
             ]}>
             {signing ? (
               <ActivityIndicator color={colors.text} />
@@ -95,11 +113,13 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
                   color="#4285F4"
                   style={styles.googleIcon}
                 />
-                <Text style={styles.googleLabel}>Continue with Google</Text>
+                <Text style={[styles.googleLabel, {color: colors.text}]}>
+                  Continue with Google
+                </Text>
               </>
             )}
           </Pressable>
-          <Text style={styles.footnote}>
+          <Text style={[styles.footnote, {color: colors.textTertiary}]}>
             Fast, secure, and encrypted with your local device.
           </Text>
         </View>
@@ -117,9 +137,6 @@ const LoginScreen = ({navigation}: RootStackScreenProps<'Login'>) => {
 };
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: colors.background,
-  },
   content: {
     flex: 1,
     justifyContent: 'center',
@@ -133,7 +150,6 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: radius.lg,
-    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.small,
@@ -149,27 +165,22 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: radius.circle,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: colors.background,
   },
   title: {
     ...typography.heading2,
-    color: colors.text,
     textAlign: 'center',
     marginTop: spacing[5],
   },
   subtitle: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing[2],
     paddingHorizontal: spacing[4],
   },
   card: {
-    backgroundColor: colors.surface,
     borderRadius: radius.xl,
     padding: spacing[5],
     gap: spacing[4],
@@ -179,8 +190,6 @@ const styles = StyleSheet.create({
     height: componentTheme.button.height,
     borderRadius: componentTheme.button.radius,
     borderWidth: sizes.border,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -188,19 +197,14 @@ const styles = StyleSheet.create({
   googleButtonDisabled: {
     opacity: 0.6,
   },
-  googleButtonPressed: {
-    backgroundColor: colors.backgroundSecondary,
-  },
   googleIcon: {
     marginRight: spacing[2],
   },
   googleLabel: {
     ...typography.button,
-    color: colors.text,
   },
   footnote: {
     ...typography.bodySmall,
-    color: colors.textTertiary,
     textAlign: 'center',
   },
 });

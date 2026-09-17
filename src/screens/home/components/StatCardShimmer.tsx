@@ -1,11 +1,14 @@
 // Placeholder for a stat card while Realm data is loading.
 import {StyleSheet, View} from 'react-native';
 import {Shimmer} from '../../../shared/components';
-import {colors, radius, spacing} from '../../../shared/theme';
+import {radius, spacing} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 const StatCardShimmer = () => {
+  const {colors} = useTheme();
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, {backgroundColor: colors.primaryLight}]}>
       <Shimmer
         width="56%"
         height={10}
@@ -34,7 +37,6 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     minWidth: 0,
-    backgroundColor: colors.primaryLight,
     borderRadius: radius.md,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[2],
