@@ -3,7 +3,7 @@ import {StatusBar, StyleSheet, useColorScheme} from 'react-native';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import RootStack from './src/app/navigation/RootStack';
+import RootStack from './src/navigation/RootStack';
 import {colors} from './src/shared/theme';
 
 const navigationTheme = {
