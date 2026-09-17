@@ -44,6 +44,9 @@
     "react-test-renderer": "19.2.3",
     "typescript": "^6.0.3"
   },
+  "overrides": {
+    "image-size": "npm:image-size-next@1.2.2"
+  },
   "engines": {
     "node": ">= 22.11.0"
   }
