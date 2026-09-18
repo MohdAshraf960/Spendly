@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
-import {userRepository} from '../repositories/userRepository';
-import {signOutFromGoogle} from '../services/googleAuth';
+import {userRepository} from '../../../repositories/userRepository';
+import {signOutFromGoogle} from '../../../services/googleAuth';
 
 // Revokes + signs out of Google, then wipes local user + expenses.
 const useLogout = () => {

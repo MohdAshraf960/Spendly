@@ -1,10 +1,10 @@
 import {useCallback, useState} from 'react';
-import {userRepository} from '../repositories/userRepository';
+import {userRepository} from '../../../repositories/userRepository';
 import {
   GoogleSignInCancelledError,
   signInWithGoogle,
-} from '../services/googleAuth';
-import type {User} from '../types/user';
+} from '../../../services/googleAuth';
+import type {User} from '../../../types/user';
 
 // Runs the interactive Google flow, then persists the session locally.
 // Resolves to `undefined` when the user cancels the account picker.

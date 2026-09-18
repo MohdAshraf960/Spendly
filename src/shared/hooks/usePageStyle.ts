@@ -1,5 +1,5 @@
 // Shared page and scroll padding so screens stay aligned with the theme.
-import {colors, layout, spacing} from '../shared/theme';
+import {colors, layout, spacing} from '../theme';
 
 const usePageStyle = () => ({
   // For a screen root View.

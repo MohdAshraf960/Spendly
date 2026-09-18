@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import type {RootStackScreenProps} from '../../../navigation/types';
-import {usePageStyle} from '../../../hooks';
+import {usePageStyle} from '../../../shared/hooks';
 import {userRepository} from '../../../repositories';
 import {refreshGoogleSession} from '../../../services';
 import {colors, spacing, typography} from '../../../shared/theme';
