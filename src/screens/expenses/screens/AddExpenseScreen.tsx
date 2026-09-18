@@ -1,6 +1,6 @@
 import type {RootStackScreenProps} from '../../../navigation/types';
 import ExpenseForm from '../components/ExpenseForm';
-import {useAddExpense} from '../../../hooks';
+import {useAddExpense} from '../hooks';
 
 // Shared form in add mode. Header title flips to Income when that category is picked.
 const AddExpenseScreen = ({navigation}: RootStackScreenProps<'AddExpense'>) => {

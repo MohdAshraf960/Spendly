@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {expenseRepository} from '../repositories/expenseRepository';
-import {isIncomeCategory} from '../shared/data/categories';
-import type {Expense} from '../types/expense';
-import type {HomeStats} from '../types/home';
+import {expenseRepository} from '../../../repositories/expenseRepository';
+import {isIncomeCategory} from '../../../shared/data/categories';
+import type {Expense} from '../../../types/expense';
+import type {HomeStats} from '../../../types/home';
 
 // Spent totals exclude Income. Transaction count still includes every row.
 const isSpending = (expense: Expense) => !isIncomeCategory(expense.category);

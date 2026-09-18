@@ -1,7 +1,8 @@
 import {useCallback, useState} from 'react';
-import {expenseRepository} from '../repositories/expenseRepository';
-import type {Category} from '../shared/data/categories';
-import type {CreateExpenseInput, Expense} from '../types/expense';
+import {expenseRepository} from '../../../repositories/expenseRepository';
+import type {Expense, CreateExpenseInput} from '../../../types/expense';
+import type {Category} from '../../../shared/data/categories';
+
 
 export type AddExpenseInput = Omit<CreateExpenseInput, 'category'> & {
   category: Category;

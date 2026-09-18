@@ -10,7 +10,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
 import type {RootStackScreenProps} from '../../../navigation/types';
-import {useGoogleSignIn, usePageStyle} from '../../../hooks';
+import {usePageStyle} from '../../../shared/hooks';
 import {FeedbackDialog} from '../../../shared/components';
 import {
   colors,
@@ -22,6 +22,7 @@ import {
   spacing,
   typography,
 } from '../../../shared/theme';
+import { useGoogleSignIn } from '../hooks';
 
 const splashIcon = require('../../../../assets/icons/splash_icon.webp');
 

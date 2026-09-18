@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
-import {expenseRepository} from '../repositories/expenseRepository';
-import type {Expense, ExpenseQuery} from '../types/expense';
+import {expenseRepository} from '../../../repositories/expenseRepository';
+import type {Expense, ExpenseQuery} from '../../../types/expense';
 
 // Live Realm query for Home. Search and filters run in the database.
 const toErrorMessage = (error: unknown) =>
