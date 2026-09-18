@@ -1,6 +1,7 @@
 // Shared page and scroll padding so screens stay aligned with the theme.
-import {layout, spacing} from '../shared/theme';
-import {useTheme} from '../shared/context';
+import {layout, spacing} from '../theme';
+import {useTheme} from '../context';
+
 
 const usePageStyle = () => {
   const {colors} = useTheme();

@@ -17,9 +17,9 @@ import {
   FeedbackDialog,
   type FeedbackDialogVariant,
 } from '../../../shared/components';
-import {usePageStyle} from '../../../hooks';
-import {layout, spacing} from '../../../shared/theme';
 import {useTheme} from '../../../shared/context';
+import {usePageStyle} from '../../../shared/hooks';
+import {layout, spacing} from '../../../shared/theme';
 import {isIncomeCategory, type Category} from '../../../shared/data/categories';
 import {formatInr} from '../../../shared/utils/formatCurrency';
 import {

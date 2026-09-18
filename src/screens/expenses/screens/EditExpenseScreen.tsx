@@ -2,7 +2,7 @@ import {useEffect} from 'react';
 import type {RootStackScreenProps} from '../../../navigation/types';
 import {toCategory} from '../../../shared/data/categories';
 import ExpenseForm from '../components/ExpenseForm';
-import {useExpense, useUpdateExpense} from '../../../hooks';
+import {useExpense, useUpdateExpense} from '../hooks';
 
 const EditExpenseScreen = ({
   navigation,

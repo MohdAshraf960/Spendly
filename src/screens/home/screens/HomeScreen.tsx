@@ -12,15 +12,9 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
 import type {RootStackScreenProps} from '../../../navigation/types';
 import {
-  useCurrentUser,
-  useDebouncedSearch,
-  useDeleteExpense,
-  useExpenses,
-  useLedgerStats,
-  useLogout,
   usePagedList,
   usePageStyle,
-} from '../../../hooks';
+} from '../../../shared/hooks';
 import {EmptyState, FeedbackDialog} from '../../../shared/components';
 import {layout, radius, shadows, sizes, spacing, typography} from '../../../shared/theme';
 import {useTheme} from '../../../shared/context';
@@ -39,6 +33,8 @@ import HomeFilterSheet from '../components/HomeFilterSheet';
 import HomeSearchBar from '../components/HomeSearchBar';
 import StatCard from '../components/StatCard';
 import StatCardShimmer from '../components/StatCardShimmer';
+import { useExpenses, useDeleteExpense } from '../../expenses/hooks';
+import { useDebouncedSearch, useCurrentUser, useLogout, useLedgerStats } from '../hooks';
 
 const noExpenseIcon = require('../../../../assets/icons/no_expense_icon.webp');
 const noSearchFoundIcon = require('../../../../assets/icons/no_search_found.webp');
