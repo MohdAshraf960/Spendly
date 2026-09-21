@@ -9,7 +9,8 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import Button from './Button';
 
 export type EmptyStateProps = {
@@ -31,15 +32,16 @@ const EmptyState = ({
   onActionPress,
   style,
 }: EmptyStateProps) => {
+  const {colors} = useTheme();
   return (
     <View style={[styles.container, style]}>
       {image ? (
         <Image source={image} style={styles.image} resizeMode="contain" />
       ) : icon ? (
-        <View style={styles.iconWrap}>{icon}</View>
+        <View style={[styles.iconWrap, {backgroundColor: colors.successBackground}]}>{icon}</View>
       ) : null}
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <Text style={[styles.title, {color: colors.text}]}>{title}</Text>
+      <Text style={[styles.description, {color: colors.textSecondary}]}>{description}</Text>
       {actionTitle && onActionPress ? (
         <Button
           title={actionTitle}
@@ -61,7 +63,6 @@ const styles = StyleSheet.create({
     width: sizes.avatarLg + spacing[8],
     height: sizes.avatarLg + spacing[8],
     borderRadius: radius.circle,
-    backgroundColor: colors.successBackground,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing[4],
@@ -73,12 +74,10 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.text,
     textAlign: 'center',
   },
   description: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing[2],
   },

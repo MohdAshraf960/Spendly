@@ -9,7 +9,8 @@ import {
   type TextInputProps,
   type ViewStyle,
 } from 'react-native';
-import {colors, componentTheme, sizes, spacing, typography} from '../theme';
+import {componentTheme, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 
 export type TextFieldProps = Omit<TextInputProps, 'editable' | 'style'> & {
   label?: string;
@@ -31,32 +32,32 @@ const TextField = ({
   fieldStyle,
   onFocus,
   onBlur,
+  placeholderTextColor,
   ...inputProps
 }: TextFieldProps) => {
+  const {colors} = useTheme();
   const [focused, setFocused] = useState(false);
 
   const borderColor = error
-    ? componentTheme.input.errorBorder
+    ? colors.error
     : focused
-    ? componentTheme.input.focusedBorder
-    : componentTheme.input.border;
+    ? colors.borderFocused
+    : colors.borderLight;
 
   return (
     <View style={containerStyle}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? <Text style={[styles.label, {color: colors.textSecondary}]}>{label}</Text> : null}
       <View
         style={[
           styles.field,
-          {
-            borderColor,
-          },
+          {borderColor},
           fieldStyle,
         ]}>
         {prefix ? <View style={styles.affix}>{prefix}</View> : null}
         <TextInput
           {...inputProps}
           editable={!disabled}
-          placeholderTextColor={componentTheme.input.placeholder}
+          placeholderTextColor={placeholderTextColor ?? colors.textTertiary}
           onFocus={event => {
             setFocused(true);
             onFocus?.(event);
@@ -70,14 +71,14 @@ const TextField = ({
             styles.input,
             {
               color: disabled
-                ? componentTheme.input.disabledText
-                : componentTheme.input.text,
+                ? colors.textDisabled
+                : colors.text,
             },
           ]}
         />
         {suffix ? <View style={styles.affix}>{suffix}</View> : null}
       </View>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      {error ? <Text style={[styles.error, {color: colors.error}]}>{error}</Text> : null}
     </View>
   );
 };
@@ -85,7 +86,6 @@ const TextField = ({
 const styles = StyleSheet.create({
   label: {
     ...typography.label,
-    color: colors.textSecondary,
     marginBottom: spacing[1],
   },
   field: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[3],
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.transparent,
+    backgroundColor: 'transparent',
   },
   affix: {
     marginHorizontal: spacing[1],
@@ -106,11 +106,10 @@ const styles = StyleSheet.create({
     ...typography.body,
     flex: 1,
     paddingVertical: spacing[2],
-    backgroundColor: colors.transparent,
+    backgroundColor: 'transparent',
   },
   error: {
     ...typography.caption,
-    color: colors.error,
     marginTop: spacing[1],
   },
 });

@@ -11,7 +11,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 
 export type CategoryTileProps = {
   name: string;
@@ -24,13 +25,13 @@ export type CategoryTileProps = {
 
 const CategoryTile = ({
   name,
-  
   icon,
   image,
   selected = false,
   onPress,
   style,
 }: CategoryTileProps) => {
+  const {colors} = useTheme();
 
   return (
     <Pressable
@@ -40,13 +41,16 @@ const CategoryTile = ({
       accessibilityLabel={name}
       style={[
         styles.tile,
-        selected ? styles.tileSelected : styles.tileUnselected,
+        selected
+          ? {backgroundColor: colors.successBackground}
+          : {
+              backgroundColor: colors.surface,
+              borderWidth: sizes.border,
+              borderColor: colors.borderLight,
+            },
         style,
       ]}>
-      <View
-        style={[
-          styles.iconWrap,
-        ]}>
+      <View style={styles.iconWrap}>
         {image ? (
           <Image source={image} style={styles.image} resizeMode="contain" />
         ) : (
@@ -55,11 +59,21 @@ const CategoryTile = ({
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={1}>
+        <Text style={[styles.name, {color: colors.text}]} numberOfLines={1}>
           {name}
         </Text>
       </View>
-      <View style={[styles.radio, selected ? styles.radioSelected : styles.radioUnselected]}>
+      <View
+        style={[
+          styles.radio,
+          selected
+            ? {backgroundColor: colors.primary}
+            : {
+                borderWidth: sizes.border,
+                borderColor: colors.border,
+                backgroundColor: colors.transparent,
+              },
+        ]}>
         {selected ? (
           <Ionicons
             name="checkmark"
@@ -80,14 +94,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
   },
-  tileSelected: {
-    backgroundColor: colors.successBackground,
-  },
-  tileUnselected: {
-    backgroundColor: colors.surface,
-    borderWidth: sizes.border,
-    borderColor: colors.borderLight,
-  },
   iconWrap: {
     width: sizes.avatarMd,
     height: sizes.avatarMd,
@@ -95,7 +101,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
- 
   image: {
     width: sizes.avatarMd,
     height: sizes.avatarMd,
@@ -108,11 +113,9 @@ const styles = StyleSheet.create({
   name: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
   },
   meta: {
     ...typography.caption,
-    color: colors.textTertiary,
     marginTop: spacing[1],
   },
   radio: {
@@ -121,14 +124,6 @@ const styles = StyleSheet.create({
     borderRadius: radius.circle,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  radioSelected: {
-    backgroundColor: colors.primary,
-  },
-  radioUnselected: {
-    borderWidth: sizes.border,
-    borderColor: colors.border,
-    backgroundColor: colors.transparent,
   },
 });
 

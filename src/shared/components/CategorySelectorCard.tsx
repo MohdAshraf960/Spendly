@@ -1,7 +1,8 @@
 // Closed state of the category picker. Opens the sheet when pressed.
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import type {Category} from '../data/categories';
 import FormFieldCard from './FormFieldCard';
 
@@ -16,6 +17,8 @@ const CategorySelectorCard = ({
   onChangePress,
   error,
 }: CategorySelectorCardProps) => {
+  const {colors} = useTheme();
+
   return (
     <FormFieldCard
       label="Category"
@@ -26,7 +29,13 @@ const CategorySelectorCard = ({
         onPress={onChangePress}
         accessibilityRole="button"
         accessibilityLabel={category ? 'Change category' : 'Select category'}
-        style={[styles.inner, error ? styles.innerError : null]}>
+        style={[
+          styles.inner,
+          {
+            backgroundColor: colors.transparent,
+            borderColor: error ? colors.error : colors.border,
+          },
+        ]}>
         {category ? (
           <Image
             source={category.image}
@@ -34,7 +43,11 @@ const CategorySelectorCard = ({
             resizeMode="contain"
           />
         ) : (
-          <View style={styles.placeholderIcon}>
+          <View
+            style={[
+              styles.placeholderIcon,
+              {backgroundColor: colors.successBackground},
+            ]}>
             <Ionicons
               name="pricetag-outline"
               size={sizes.iconSm}
@@ -43,15 +56,17 @@ const CategorySelectorCard = ({
           </View>
         )}
         <View style={styles.content}>
-          <Text style={styles.name} numberOfLines={1}>
+          <Text style={[styles.name, {color: colors.text}]} numberOfLines={1}>
             {category?.name ?? 'Select category'}
           </Text>
-          <Text style={styles.description} numberOfLines={1}>
+          <Text
+            style={[styles.description, {color: colors.textTertiary}]}
+            numberOfLines={1}>
             {category?.description ?? 'Choose one category'}
           </Text>
         </View>
         <View style={styles.changeButton}>
-          <Text style={styles.changeLabel}>
+          <Text style={[styles.changeLabel, {color: colors.primaryLight}]}>
             {category ? 'Change' : 'Select'}
           </Text>
           <Ionicons
@@ -69,15 +84,10 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.transparent,
     borderWidth: sizes.border,
-    borderColor: colors.border,
     borderRadius: radius.lg,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
-  },
-  innerError: {
-    borderColor: colors.error,
   },
   icon: {
     width: sizes.avatarMd,
@@ -87,7 +97,6 @@ const styles = StyleSheet.create({
     width: sizes.avatarMd,
     height: sizes.avatarMd,
     borderRadius: radius.circle,
-    backgroundColor: colors.successBackground,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -99,11 +108,9 @@ const styles = StyleSheet.create({
   name: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
   },
   description: {
     ...typography.caption,
-    color: colors.textTertiary,
     marginTop: spacing[1],
   },
   changeButton: {
@@ -113,7 +120,6 @@ const styles = StyleSheet.create({
   },
   changeLabel: {
     ...typography.label,
-    color: colors.primaryLight,
   },
 });
 

@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
-import {Animated, StyleSheet, View,  StyleProp,  ViewStyle} from 'react-native';
-import {colors, radius} from '../theme';
+import {Animated, StyleSheet, View, StyleProp, ViewStyle} from 'react-native';
+import {radius} from '../theme';
+import {useTheme} from '../context';
 
 // Lightweight loading bone. Width can be a number or a percent string.
 export type ShimmerProps = {
@@ -16,10 +17,14 @@ const Shimmer = ({
   width = '100%',
   height = 12,
   borderRadius = radius.sm,
-  baseColor = colors.surfaceSecondary,
-  highlightColor = colors.white,
+  baseColor,
+  highlightColor,
   style,
 }: ShimmerProps) => {
+  const {colors} = useTheme();
+  const resolvedBase = baseColor ?? colors.surfaceSecondary;
+  const resolvedHighlight = highlightColor ?? colors.white;
+
   const translateX = useRef(new Animated.Value(0)).current;
   const [boneWidth, setBoneWidth] = useState(0);
 
@@ -44,7 +49,7 @@ const Shimmer = ({
           width,
           height,
           borderRadius,
-          backgroundColor: baseColor,
+          backgroundColor: resolvedBase,
         },
         style,
       ]}>
@@ -53,7 +58,7 @@ const Shimmer = ({
         style={[
           styles.highlight,
           {
-            backgroundColor: highlightColor,
+            backgroundColor: resolvedHighlight,
             transform: [
               {
                 translateX: translateX.interpolate({

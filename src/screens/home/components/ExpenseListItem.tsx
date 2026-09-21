@@ -1,6 +1,7 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
-import {colors, radius, sizes, spacing, typography} from '../../../shared/theme';
+import {radius, sizes, spacing, typography} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 import {getCategoryImage, isIncomeCategory} from '../../../shared/data/categories';
 import {formatInrCompact} from '../../../shared/utils/formatCurrency';
 import {formatExpenseShortDate} from '../../../shared/utils/formatDate';
@@ -17,6 +18,7 @@ const ExpenseListItem = ({
   onPress,
   onDeletePress,
 }: ExpenseListItemProps) => {
+  const {colors} = useTheme();
   // Income: green +amount. Expense: red -amount. Compact after 3+ digits.
   const isIncome = isIncomeCategory(expense.category);
 
@@ -25,21 +27,25 @@ const ExpenseListItem = ({
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${isIncome ? 'Income' : 'Expense'} ${expense.title}`}
-      style={styles.row}>
+      style={[styles.row, {backgroundColor: colors.surface}]}>
       <Image
         source={getCategoryImage(expense.category)}
         style={styles.icon}
         resizeMode="contain"
       />
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>
+        <Text style={[styles.title, {color: colors.text}]} numberOfLines={1}>
           {expense.title}
         </Text>
-        <Text style={styles.date} numberOfLines={1}>
+        <Text style={[styles.date, {color: colors.textTertiary}]} numberOfLines={1}>
           {formatExpenseShortDate(expense.date)}
         </Text>
       </View>
-      <Text style={[styles.amount, isIncome ? styles.incomeAmount : styles.expenseAmount]}>
+      <Text
+        style={[
+          styles.amount,
+          {color: isIncome ? colors.success : colors.error},
+        ]}>
         {`${isIncome ? '+' : '-'}${formatInrCompact(expense.amount)}`}
       </Text>
       <Pressable
@@ -67,7 +73,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
     borderRadius: radius.md,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
@@ -84,11 +89,9 @@ const styles = StyleSheet.create({
   title: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
   },
   date: {
     ...typography.caption,
-    color: colors.textTertiary,
     marginTop: spacing[1],
   },
   amount: {
@@ -96,12 +99,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginRight: spacing[2],
     flexShrink: 0,
-  },
-  incomeAmount: {
-    color: colors.success,
-  },
-  expenseAmount: {
-    color: colors.error,
   },
   deleteButton: {
     padding: spacing[1],

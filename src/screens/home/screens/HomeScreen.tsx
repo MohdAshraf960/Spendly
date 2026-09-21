@@ -4,6 +4,7 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   View,
 } from 'react-native';
@@ -15,7 +16,8 @@ import {
   usePageStyle,
 } from '../../../shared/hooks';
 import {EmptyState, FeedbackDialog} from '../../../shared/components';
-import {colors, layout, radius, shadows, sizes, spacing, typography} from '../../../shared/theme';
+import {layout, radius, shadows, sizes, spacing, typography} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 import {formatInrCompact} from '../../../shared/utils/formatCurrency';
 import {
   EMPTY_HOME_FILTERS,
@@ -40,6 +42,7 @@ const noSearchFoundIcon = require('../../../../assets/icons/no_search_found.webp
 // Ledger home: stats, search/filter, paged list, FAB to add, logout in the header.
 const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
   const pageStyle = usePageStyle();
+  const {colors, isDark, setThemePreference} = useTheme();
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<HomeFilters>(EMPTY_HOME_FILTERS);
@@ -96,7 +99,7 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
         </Pressable>
       ),
     });
-  }, [navigation]);
+  }, [navigation, colors]);
 
   const monthSubtitle = new Date().toLocaleString('en-IN', {
     month: 'short',
@@ -126,7 +129,7 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
   ];
 
   return (
-    <View style={[pageStyle.page, styles.page]}>
+    <View style={[pageStyle.page, {backgroundColor: colors.background}]}>
       <FlatList
         data={pagedItems}
         keyExtractor={item => item.id}
@@ -143,12 +146,36 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
         ]}
         ListHeaderComponent={
           <>
-            <Text style={styles.welcome} numberOfLines={1}>
-              Welcome {user?.name ?? user?.email ?? 'there'}
-            </Text>
-            <View style={styles.summary}>
-              <Text style={styles.summaryKicker}>SUMMARY ANALYTICS</Text>
-              <Text style={styles.summaryTitle}>Overview</Text>
+            <View style={styles.welcomeRow}>
+              <Text
+                style={[styles.welcome, {color: colors.text}]}
+                numberOfLines={1}>
+                Welcome {user?.name ?? user?.email ?? 'there'}
+              </Text>
+              <View style={styles.themeToggle}>
+                <Ionicons
+                  name={isDark ? 'moon' : 'sunny'}
+                  size={sizes.iconSm}
+                  color={isDark ? colors.primary : colors.warning}
+                />
+                <Switch
+                  value={isDark}
+                  onValueChange={val =>
+                    setThemePreference(val ? 'dark' : 'light')
+                  }
+                  trackColor={{false: colors.borderLight, true: colors.primary}}
+                  thumbColor={colors.white}
+                  accessibilityLabel="Toggle dark mode"
+                />
+              </View>
+            </View>
+            <View style={[styles.summary, {backgroundColor: colors.primary}]}>
+              <Text style={[styles.summaryKicker, {color: colors.textOnPrimary}]}>
+                SUMMARY ANALYTICS
+              </Text>
+              <Text style={[styles.summaryTitle, {color: colors.textOnPrimary}]}>
+                Overview
+              </Text>
               <View style={styles.statsRow}>
                 {loading
                   ? [0, 1, 2].map(index => <StatCardShimmer key={index} />)
@@ -219,7 +246,10 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
           accessibilityLabel="Add expense"
           style={[
             styles.fab,
-            {bottom: Math.max(insets.bottom, spacing[4])},
+            {
+              backgroundColor: colors.primary,
+              bottom: Math.max(insets.bottom, spacing[4]),
+            },
           ]}>
           <Ionicons name="add" size={sizes.iconLg} color={colors.white} />
         </Pressable>
@@ -286,13 +316,21 @@ const HomeScreen = ({navigation}: RootStackScreenProps<'Home'>) => {
 };
 
 const styles = StyleSheet.create({
-  page: {
-    backgroundColor: colors.background,
+  welcomeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing[4],
+    gap: spacing[2],
   },
   welcome: {
     ...typography.title,
-    color: colors.text,
-    marginTop: spacing[4],
+    flex: 1,
+  },
+  themeToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[1],
   },
   listContent: {
     gap: spacing[2],
@@ -303,25 +341,21 @@ const styles = StyleSheet.create({
     width: sizes.fab,
     height: sizes.fab,
     borderRadius: radius.md,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.floating,
   },
   summary: {
-    backgroundColor: colors.primary,
     borderRadius: radius.xl,
     padding: spacing[4],
     marginTop: spacing[4],
   },
   summaryKicker: {
     ...typography.caption,
-    color: colors.textOnPrimary,
     letterSpacing: 0.6,
   },
   summaryTitle: {
     ...typography.title,
-    color: colors.textOnPrimary,
     marginTop: spacing[1],
     marginBottom: spacing[4],
   },

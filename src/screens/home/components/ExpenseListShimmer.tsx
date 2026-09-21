@@ -1,17 +1,22 @@
 // Skeleton rows that match the transaction tile layout.
 import {StyleSheet, View} from 'react-native';
 import {Shimmer} from '../../../shared/components';
-import {colors, radius, sizes, spacing} from '../../../shared/theme';
+import {radius, sizes, spacing} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 
 type ExpenseListShimmerProps = {
   rows?: number;
 };
 
 const ExpenseListShimmer = ({rows = 6}: ExpenseListShimmerProps) => {
+  const {colors} = useTheme();
+
   return (
     <View style={styles.list}>
       {Array.from({length: rows}, (_, index) => (
-        <View key={index} style={styles.row}>
+        <View
+          key={index}
+          style={[styles.row, {backgroundColor: colors.surface}]}>
           <Shimmer
             width={sizes.avatarMd}
             height={sizes.avatarMd}
@@ -46,7 +51,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
     borderRadius: radius.md,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],

@@ -3,7 +3,8 @@ import {Image, Modal, Platform, Pressable, StyleSheet, Text, View} from 'react-n
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import {formatExpenseDateTitle, formatExpenseTime} from '../utils/formatDate';
 import FormFieldCard from './FormFieldCard';
 
@@ -22,6 +23,7 @@ const applyPickedDate = (current: Date, picked: Date) => {
 };
 
 const DatePickerField = ({value, onChange}: DatePickerFieldProps) => {
+  const {colors} = useTheme();
   const [showPicker, setShowPicker] = useState(false);
   const [iosDraft, setIosDraft] = useState(value);
 
@@ -53,22 +55,30 @@ const DatePickerField = ({value, onChange}: DatePickerFieldProps) => {
           onPress={openPicker}
           accessibilityRole="button"
           accessibilityLabel="Pick date"
-          style={styles.inner}>
+          style={[
+            styles.inner,
+            {
+              backgroundColor: colors.transparent,
+              borderColor: colors.border,
+            },
+          ]}>
           <Image
             source={datePickerIcon}
             style={styles.icon}
             resizeMode="contain"
           />
           <View style={styles.content}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={[styles.title, {color: colors.text}]} numberOfLines={1}>
               {formatExpenseDateTitle(value)}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, {color: colors.textTertiary}]}>
               Logged at {formatExpenseTime(value)}
             </Text>
           </View>
           <View style={styles.pickButton}>
-              <Text style={styles.pickLabel}>{'Pick Date'}</Text>
+            <Text style={[styles.pickLabel, {color: colors.primary}]}>
+              {'Pick Date'}
+            </Text>
           </View>
         </Pressable>
       </FormFieldCard>
@@ -93,13 +103,17 @@ const DatePickerField = ({value, onChange}: DatePickerFieldProps) => {
               style={styles.iosBackdrop}
               onPress={() => setShowPicker(false)}
             />
-            <View style={styles.iosSheet}>
+            <View style={[styles.iosSheet, {backgroundColor: colors.surface}]}>
               <View style={styles.iosActions}>
                 <Pressable onPress={() => setShowPicker(false)}>
-                  <Text style={styles.iosAction}>Cancel</Text>
+                  <Text style={[styles.iosAction, {color: colors.textSecondary}]}>
+                    Cancel
+                  </Text>
                 </Pressable>
                 <Pressable onPress={confirmIosDate}>
-                  <Text style={[styles.iosAction, styles.iosDone]}>Done</Text>
+                  <Text style={[styles.iosAction, styles.iosDone, {color: colors.primary}]}>
+                    Done
+                  </Text>
                 </Pressable>
               </View>
               <DateTimePicker
@@ -124,9 +138,7 @@ const styles = StyleSheet.create({
   inner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.transparent,
     borderWidth: sizes.border,
-    borderColor: colors.border,
     borderRadius: radius.lg,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
@@ -143,11 +155,9 @@ const styles = StyleSheet.create({
   title: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
   },
   subtitle: {
     ...typography.caption,
-    color: colors.textTertiary,
     marginTop: spacing[1],
   },
   pickButton: {
@@ -157,7 +167,6 @@ const styles = StyleSheet.create({
   },
   pickLabel: {
     ...typography.label,
-    color: colors.primary,
     textAlign: 'left',
   },
   iosOverlay: {
@@ -169,7 +178,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   iosSheet: {
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingBottom: spacing[6],
@@ -182,10 +190,8 @@ const styles = StyleSheet.create({
   },
   iosAction: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
   },
   iosDone: {
-    color: colors.primary,
     fontWeight: '600',
   },
 });

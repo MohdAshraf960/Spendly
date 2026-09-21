@@ -1,5 +1,5 @@
 import {getRealm} from '../database/realm';
-import type {GoogleProfile, User} from '../types/user';
+import type {GoogleProfile, ThemePreference, User} from '../types/user';
 
 type RealmUser = {
   _id: string;
@@ -8,6 +8,7 @@ type RealmUser = {
   photo?: string;
   googleId?: string;
   idToken?: string;
+  themePreference?: string;
   createdAt: Date;
 };
 
@@ -21,6 +22,7 @@ const toUser = (user: RealmUser): User => ({
   photo: user.photo,
   googleId: user.googleId,
   idToken: user.idToken,
+  themePreference: user.themePreference as ThemePreference | undefined,
   createdAt: new Date(user.createdAt),
 });
 
@@ -61,6 +63,21 @@ export class UserRepository {
     });
   }
 
+  // Persists the user's explicit theme choice so it survives restarts.
+  updateThemePreference(pref: ThemePreference) {
+    const realm = getRealm();
+    const existing = realm.objectForPrimaryKey<RealmUser>(
+      'User',
+      CURRENT_USER_ID,
+    );
+    if (!existing) {
+      return;
+    }
+    realm.write(() => {
+      existing.themePreference = pref;
+    });
+  }
+
   // Clears the whole Realm so the next login starts with an empty ledger.
   logout() {
     const realm = getRealm();
@@ -84,3 +101,4 @@ export class UserRepository {
 }
 
 export const userRepository = new UserRepository();
+

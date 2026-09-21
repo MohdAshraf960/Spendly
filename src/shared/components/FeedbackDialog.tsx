@@ -1,7 +1,8 @@
 import {Modal, Pressable, StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
-import {colors, radius, sizes, spacing, typography} from '../theme';
+import {radius, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 import Button from './Button';
 
 // Save result sheet. Success closes the form; error stays so the user can retry.
@@ -16,19 +17,6 @@ export type FeedbackDialogProps = {
   onClose: () => void;
 };
 
-const variantTheme = {
-  success: {
-    icon: 'checkmark' as const,
-    iconColor: colors.success,
-    iconBackground: colors.successBackground,
-  },
-  error: {
-    icon: 'close' as const,
-    iconColor: colors.error,
-    iconBackground: colors.errorBackground,
-  },
-};
-
 const FeedbackDialog = ({
   visible,
   variant,
@@ -38,6 +26,21 @@ const FeedbackDialog = ({
   onClose,
 }: FeedbackDialogProps) => {
   const insets = useSafeAreaInsets();
+  const {colors} = useTheme();
+
+  const variantTheme = {
+    success: {
+      icon: 'checkmark' as const,
+      iconColor: colors.success,
+      iconBackground: colors.successBackground,
+    },
+    error: {
+      icon: 'close' as const,
+      iconColor: colors.error,
+      iconBackground: colors.errorBackground,
+    },
+  };
+
   const theme = variantTheme[variant];
 
   return (
@@ -48,30 +51,25 @@ const FeedbackDialog = ({
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={[styles.sheet, {paddingBottom: insets.bottom + spacing[4]}]}>
+        <View
+          style={[
+            styles.sheet,
+            {backgroundColor: colors.surface, paddingBottom: insets.bottom + spacing[4]},
+          ]}>
           <View style={styles.header}>
-            <View
-              style={[styles.iconWrap, {backgroundColor: theme.iconBackground}]}>
-              <Ionicons
-                name={theme.icon}
-                size={sizes.iconSm}
-                color={theme.iconColor}
-              />
+            <View style={[styles.iconWrap, {backgroundColor: theme.iconBackground}]}>
+              <Ionicons name={theme.icon} size={sizes.iconSm} color={theme.iconColor} />
             </View>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={[styles.title, {color: colors.text}]}>{title}</Text>
             <Pressable
               onPress={onClose}
               hitSlop={8}
               accessibilityRole="button"
               accessibilityLabel="Close">
-              <Ionicons
-                name="close"
-                size={sizes.iconMd}
-                color={colors.textTertiary}
-              />
+              <Ionicons name="close" size={sizes.iconMd} color={colors.textTertiary} />
             </Pressable>
           </View>
-          <Text style={styles.message}>{message}</Text>
+          <Text style={[styles.message, {color: colors.textSecondary}]}>{message}</Text>
           <Button
             title={actionTitle}
             variant={variant === 'error' ? 'danger' : 'primary'}
@@ -94,7 +92,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   sheet: {
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingHorizontal: spacing[4],
@@ -113,13 +110,11 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.text,
     flex: 1,
     marginHorizontal: spacing[3],
   },
   message: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
     marginTop: spacing[3],
     marginBottom: spacing[5],
   },

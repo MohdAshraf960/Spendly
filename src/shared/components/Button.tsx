@@ -8,7 +8,8 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import {componentTheme, colors, sizes, spacing, typography} from '../theme';
+import {componentTheme, sizes, spacing, typography} from '../theme';
+import {useTheme} from '../context';
 
 // Shared action button. Variants come from componentTheme tokens.
 export type ButtonVariant = 'primary' | 'outline' | 'danger' | 'warning';
@@ -31,7 +32,7 @@ const variantColors = {
 
 const Button = ({
   title,
-  variant = 'primary',  
+  variant = 'primary',
   disabled = false,
   icon,
   iconPosition = 'left',
@@ -39,9 +40,8 @@ const Button = ({
   onPress,
   ...pressableProps
 }: ButtonProps) => {
-  const palette = disabled
-    ? componentTheme.button.disabled
-    : variantColors[variant];
+  const {colors} = useTheme();
+  const palette = disabled ? componentTheme.button.disabled : variantColors[variant];
   const isOutline = variant === 'outline';
 
   return (

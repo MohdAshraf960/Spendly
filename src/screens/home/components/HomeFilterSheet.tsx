@@ -16,7 +16,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Ionicons} from '@react-native-vector-icons/ionicons/static';
 import {Button, CategoryTile} from '../../../shared/components';
 import {CATEGORIES} from '../../../shared/data/categories';
-import {colors, layout, radius, sizes, spacing, typography} from '../../../shared/theme';
+import {layout, radius, sizes, spacing, typography} from '../../../shared/theme';
+import {useTheme} from '../../../shared/context';
 import {formatExpenseShortDate} from '../../../shared/utils/formatDate';
 import {EMPTY_HOME_FILTERS, type HomeFilters} from '../../../types';
 
@@ -59,6 +60,7 @@ const HomeFilterSheet = ({
   onClose,
 }: HomeFilterSheetProps) => {
   const insets = useSafeAreaInsets();
+  const {colors} = useTheme();
   const [pane, setPane] = useState<FilterPane>('category');
   const [draft, setDraft] = useState<HomeFilters>(copyFilters(filters));
   const [dateField, setDateField] = useState<DateField>();
@@ -131,9 +133,22 @@ const HomeFilterSheet = ({
       onRequestClose={onClose}>
       <View style={styles.overlay}>
         <Pressable style={styles.backdrop} onPress={onClose} />
-        <View style={[styles.sheet, {paddingBottom: insets.bottom + spacing[3]}]}>
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Filters</Text>
+        <View
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.surface,
+              paddingBottom: insets.bottom + spacing[3],
+            },
+          ]}>
+          <View
+            style={[
+              styles.header,
+              {borderBottomColor: colors.borderLight},
+            ]}>
+            <Text style={[styles.headerTitle, {color: colors.text}]}>
+              Filters
+            </Text>
             <View style={styles.headerActions}>
               <Pressable
                 onPress={() => {
@@ -143,7 +158,9 @@ const HomeFilterSheet = ({
                 hitSlop={8}
                 accessibilityRole="button"
                 accessibilityLabel="Reset all filters">
-                <Text style={styles.resetLabel}>Reset All</Text>
+                <Text style={[styles.resetLabel, {color: colors.primary}]}>
+                  Reset All
+                </Text>
               </Pressable>
               <Pressable
                 onPress={onClose}
@@ -160,16 +177,34 @@ const HomeFilterSheet = ({
           </View>
 
           <View style={styles.panes}>
-            <View style={styles.leftPane}>
+            <View
+              style={[
+                styles.leftPane,
+                {
+                  backgroundColor: colors.background,
+                  borderRightColor: colors.borderLight,
+                },
+              ]}>
               <Pressable
                 onPress={() => setPane('category')}
                 style={[
                   styles.paneTab,
-                  pane === 'category' && styles.paneTabSelected,
+                  {
+                    borderLeftColor:
+                      pane === 'category' ? colors.primary : colors.transparent,
+                    backgroundColor:
+                      pane === 'category' ? colors.surface : colors.transparent,
+                  },
                 ]}>
                 <Text
                   style={[
                     styles.paneTabLabel,
+                    {
+                      color:
+                        pane === 'category'
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
                     pane === 'category' && styles.paneTabLabelSelected,
                   ]}>
                   Category
@@ -179,11 +214,22 @@ const HomeFilterSheet = ({
                 onPress={() => setPane('date')}
                 style={[
                   styles.paneTab,
-                  pane === 'date' && styles.paneTabSelected,
+                  {
+                    borderLeftColor:
+                      pane === 'date' ? colors.primary : colors.transparent,
+                    backgroundColor:
+                      pane === 'date' ? colors.surface : colors.transparent,
+                  },
                 ]}>
                 <Text
                   style={[
                     styles.paneTabLabel,
+                    {
+                      color:
+                        pane === 'date'
+                          ? colors.primary
+                          : colors.textSecondary,
+                    },
                     pane === 'date' && styles.paneTabLabelSelected,
                   ]}>
                   Date/Month
@@ -220,13 +266,19 @@ const HomeFilterSheet = ({
                         onPress={() => openDatePicker('endDate')}
                       />
                       {dateError ? (
-                        <Text style={styles.dateError}>{dateError}</Text>
+                        <Text style={[styles.dateError, {color: colors.error}]}>
+                          {dateError}
+                        </Text>
                       ) : null}
                     </>
                   )}
             </ScrollView>
           </View>
-          <View style={styles.footer}>
+          <View
+            style={[
+              styles.footer,
+              {borderTopColor: colors.borderLight},
+            ]}>
             <Button
               title="Cancel"
               variant="outline"
@@ -272,13 +324,17 @@ const HomeFilterSheet = ({
               style={styles.backdrop}
               onPress={() => setDateField(undefined)}
             />
-            <View style={styles.iosSheet}>
+            <View style={[styles.iosSheet, {backgroundColor: colors.surface}]}>
               <View style={styles.iosActions}>
                 <Pressable onPress={() => setDateField(undefined)}>
-                  <Text style={styles.iosAction}>Cancel</Text>
+                  <Text style={[styles.iosAction, {color: colors.textSecondary}]}>
+                    Cancel
+                  </Text>
                 </Pressable>
                 <Pressable onPress={() => applyDate(iosDraft)}>
-                  <Text style={[styles.iosAction, styles.iosDone]}>Done</Text>
+                  <Text style={[styles.iosAction, styles.iosDone, {color: colors.primary}]}>
+                    Done
+                  </Text>
                 </Pressable>
               </View>
               <DateTimePicker
@@ -311,30 +367,39 @@ const FilterDateRow = ({
   value?: Date;
   error?: boolean;
   onPress: () => void;
-}) => (
-  <Pressable
-    onPress={onPress}
-    accessibilityRole="button"
-    accessibilityLabel={label}
-    style={[styles.dateRow, error && styles.dateRowError]}>
-    <Ionicons
-      name="calendar-outline"
-      size={sizes.iconSm}
-      color={colors.primary}
-    />
-    <View style={styles.dateContent}>
-      <Text style={styles.dateLabel}>{label}</Text>
-      <Text style={styles.dateValue}>
-        {value ? formatExpenseShortDate(value) : 'Select date'}
-      </Text>
-    </View>
-    <Ionicons
-      name="chevron-forward"
-      size={sizes.iconSm}
-      color={colors.textTertiary}
-    />
-  </Pressable>
-);
+}) => {
+  const {colors} = useTheme();
+
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={[
+        styles.dateRow,
+        {borderColor: error ? colors.error : colors.border},
+      ]}>
+      <Ionicons
+        name="calendar-outline"
+        size={sizes.iconSm}
+        color={colors.primary}
+      />
+      <View style={styles.dateContent}>
+        <Text style={[styles.dateLabel, {color: colors.textTertiary}]}>
+          {label}
+        </Text>
+        <Text style={[styles.dateValue, {color: colors.text}]}>
+          {value ? formatExpenseShortDate(value) : 'Select date'}
+        </Text>
+      </View>
+      <Ionicons
+        name="chevron-forward"
+        size={sizes.iconSm}
+        color={colors.textTertiary}
+      />
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   overlay: {
@@ -347,7 +412,6 @@ const styles = StyleSheet.create({
   },
   sheet: {
     height: '78%',
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
   },
@@ -359,11 +423,9 @@ const styles = StyleSheet.create({
     paddingTop: spacing[4],
     paddingBottom: spacing[3],
     borderBottomWidth: sizes.border,
-    borderBottomColor: colors.borderLight,
   },
   headerTitle: {
     ...typography.title,
-    color: colors.text,
   },
   headerActions: {
     flexDirection: 'row',
@@ -372,7 +434,6 @@ const styles = StyleSheet.create({
   },
   resetLabel: {
     ...typography.label,
-    color: colors.primary,
     fontWeight: '600',
   },
   panes: {
@@ -381,26 +442,17 @@ const styles = StyleSheet.create({
   },
   leftPane: {
     width: 128,
-    backgroundColor: colors.background,
     borderRightWidth: sizes.border,
-    borderRightColor: colors.borderLight,
   },
   paneTab: {
     paddingVertical: spacing[4],
     paddingHorizontal: spacing[3],
     borderLeftWidth: 3,
-    borderLeftColor: colors.transparent,
-  },
-  paneTabSelected: {
-    backgroundColor: colors.surface,
-    borderLeftColor: colors.primary,
   },
   paneTabLabel: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
   },
   paneTabLabelSelected: {
-    color: colors.primary,
     fontWeight: '600',
   },
   rightPane: {
@@ -414,18 +466,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: sizes.border,
-    borderColor: colors.border,
     borderRadius: radius.lg,
     paddingVertical: spacing[3],
     paddingHorizontal: spacing[3],
     gap: spacing[3],
   },
-  dateRowError: {
-    borderColor: colors.error,
-  },
   dateError: {
     ...typography.caption,
-    color: colors.error,
     marginTop: spacing[1],
   },
   dateContent: {
@@ -434,12 +481,10 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     ...typography.caption,
-    color: colors.textTertiary,
   },
   dateValue: {
     ...typography.bodyMedium,
     fontWeight: '600',
-    color: colors.text,
     marginTop: spacing[1],
   },
   iosOverlay: {
@@ -447,7 +492,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   iosSheet: {
-    backgroundColor: colors.surface,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingBottom: spacing[6],
@@ -460,10 +504,8 @@ const styles = StyleSheet.create({
   },
   iosAction: {
     ...typography.bodyMedium,
-    color: colors.textSecondary,
   },
   iosDone: {
-    color: colors.primary,
     fontWeight: '600',
   },
   footer: {
@@ -472,7 +514,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: layout.screenPadding,
     paddingTop: spacing[3],
     borderTopWidth: sizes.border,
-    borderTopColor: colors.borderLight,
   },
   footerButton: {
     flex: 1,
