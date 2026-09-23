@@ -50,7 +50,12 @@ const FeedbackDialog = ({
       animationType="slide"
       onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <Pressable style={styles.backdrop} onPress={onClose} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Dismiss feedback"
+          style={styles.backdrop}
+          onPress={onClose}
+        />
         <View
           style={[
             styles.sheet,
