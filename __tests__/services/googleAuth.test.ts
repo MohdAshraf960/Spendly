@@ -7,7 +7,7 @@ import {
   refreshGoogleSession,
   signInWithGoogle,
   signOutFromGoogle,
-} from '../../src/services';
+} from '../../src/data/auth';
 
 const successUser = {
   id: 'google-1',
@@ -128,7 +128,7 @@ describe('googleAuth', () => {
     let configure = GoogleSignin.configure;
 
     jest.isolateModules(() => {
-      signOut = require('../../src/services/googleAuth').signOutFromGoogle;
+      signOut = require('../../src/data/auth/googleAuth').signOutFromGoogle;
       configure =
         require('@react-native-google-signin/google-signin').GoogleSignin
           .configure;

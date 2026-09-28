@@ -3,7 +3,7 @@ import type {
   Expense,
   ExpenseQuery,
   StoredCategory,
-} from '../../src/types';
+} from '../../src/domain/entities';
 
 const category = {
   id: 'food',

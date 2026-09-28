@@ -5,7 +5,7 @@ import {useTheme} from '../../../shared/context';
 import {getCategoryImage, isIncomeCategory} from '../../../shared/data/categories';
 import {formatInrCompact} from '../../../shared/utils/formatCurrency';
 import {formatExpenseShortDate} from '../../../shared/utils/formatDate';
-import type {Expense} from '../../../types';
+import type {Expense} from '../../../domain/entities';
 
 type ExpenseListItemProps = {
   expense: Expense;

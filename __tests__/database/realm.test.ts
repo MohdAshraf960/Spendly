@@ -1,9 +1,9 @@
-import {CategorySchema, ExpenseSchema} from '../../src/database/schemas/expense';
-import {UserSchema} from '../../src/database/schemas/user';
+import {CategorySchema, ExpenseSchema} from '../../src/data/local/schemas/expense';
+import {UserSchema} from '../../src/data/local/schemas/user';
 
 jest.mock('realm', () => require('../../__mock__/realmNative'));
 
-jest.unmock('../../src/database/realm');
+jest.unmock('../../src/data/local/realm');
 
 describe('Realm schemas', () => {
   it('stores an expense with an embedded category', () => {
@@ -35,7 +35,7 @@ describe('getRealm', () => {
   });
 
   const load = () => {
-    const {getRealm} = require('../../src/database/realm') as typeof import('../../src/database/realm');
+    const {getRealm} = require('../../src/data/local/realm') as typeof import('../../src/data/local/realm');
     const {realmInstances} = require('../../__mock__/realmNative') as typeof import('../../__mock__/realmNative');
     return {getRealm, realmInstances};
   };

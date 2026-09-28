@@ -1,12 +1,9 @@
 // Catalog plus helpers to resolve a stored category back to its image.
 import type {ImageSourcePropType} from 'react-native';
+import type {StoredCategory} from '../../domain/entities/category';
 
-export type StoredCategory = {
-  id: string;
-  name: string;
-  description: string;
-  imagePath: string;
-};
+export type {StoredCategory};
+export {INCOME_CATEGORY_ID, isIncomeCategory} from '../../domain/entities/category';
 
 export type Category = {
   id: string;
@@ -132,12 +129,6 @@ export const CATEGORIES: Category[] = [
 ];
 
 const unknownCategoryImage = require('../../../assets/categories/unknown_icon.webp');
-
-// Income is money in. Every other category is treated as a spend.
-export const INCOME_CATEGORY_ID = 'income';
-
-export const isIncomeCategory = (category?: {id: string}) =>
-  category?.id === INCOME_CATEGORY_ID;
 
 export const getCategoryById = (id?: string) =>
   CATEGORIES.find(category => category.id === id);

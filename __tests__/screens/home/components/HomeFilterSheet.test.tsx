@@ -1,7 +1,7 @@
 import {fireEvent, screen} from '@testing-library/react-native';
 import HomeFilterSheet from '../../../../src/screens/home/components/HomeFilterSheet';
 import {CATEGORIES} from '../../../../src/shared/data/categories';
-import {EMPTY_HOME_FILTERS} from '../../../../src/types';
+import {EMPTY_HOME_FILTERS} from '../../../../src/screens/home/homeFilters';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 
 const food = CATEGORIES.find(category => category.id === 'food')!;

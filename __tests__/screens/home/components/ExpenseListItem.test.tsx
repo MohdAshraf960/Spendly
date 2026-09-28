@@ -1,6 +1,6 @@
 import {fireEvent, screen} from '@testing-library/react-native';
 import ExpenseListItem from '../../../../src/screens/home/components/ExpenseListItem';
-import type {Expense} from '../../../../src/types';
+import type {Expense} from '../../../../src/domain/entities';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 
 const expense = (categoryId: string): Expense => ({

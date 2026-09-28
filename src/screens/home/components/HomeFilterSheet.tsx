@@ -19,7 +19,7 @@ import {CATEGORIES} from '../../../shared/data/categories';
 import {layout, radius, sizes, spacing, typography} from '../../../shared/theme';
 import {useTheme} from '../../../shared/context';
 import {formatExpenseShortDate} from '../../../shared/utils/formatDate';
-import {EMPTY_HOME_FILTERS, type HomeFilters} from '../../../types';
+import {EMPTY_HOME_FILTERS, type HomeFilters} from '../homeFilters';
 
 type FilterPane = 'category' | 'date';
 type DateField = 'fromDate' | 'endDate';

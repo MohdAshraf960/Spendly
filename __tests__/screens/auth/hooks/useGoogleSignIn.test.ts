@@ -1,34 +1,28 @@
 import {act, renderHook} from '@testing-library/react-native';
 import React, {type ReactNode} from 'react';
-import {
-  GoogleSignInCancelledError,
-  signInWithGoogle,
-} from '../../../../src/services';
-import {userRepository} from '../../../../src/repositories/userRepository';
+import {googleAuthGateway} from '../../../../src/data/auth';
+import {userRepository} from '../../../../src/data/repositories';
+import {SignInCancelledError} from '../../../../src/domain/errors/signInCancelledError';
 import {ThemeProvider} from '../../../../src/shared/context';
 import useGoogleSignIn from '../../../../src/screens/auth/hooks/useGoogleSignIn';
-import type {GoogleProfile, User} from '../../../../src/types';
+import type {GoogleProfile, User} from '../../../../src/domain/entities';
 
-jest.mock('../../../../src/services', () => {
-  class Cancelled extends Error {
-    constructor() {
-      super('Google sign-in was cancelled.');
-      this.name = 'GoogleSignInCancelledError';
-    }
-  }
+jest.mock('../../../../src/data/auth', () => ({
+  googleAuthGateway: {
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+    refreshSession: jest.fn(),
+  },
+}));
 
-  return {
-    signInWithGoogle: jest.fn(),
-    GoogleSignInCancelledError: Cancelled,
-  };
-});
-
-jest.mock('../../../../src/repositories/userRepository', () => ({
+jest.mock('../../../../src/data/repositories', () => ({
   userRepository: {
     getCurrent: jest.fn(),
     loginWithGoogle: jest.fn(),
     updateThemePreference: jest.fn(),
+    subscribe: jest.fn(() => () => {}),
   },
+  expenseRepository: {},
 }));
 
 const profile: GoogleProfile = {
@@ -56,7 +50,7 @@ describe('useGoogleSignIn', () => {
   });
 
   it('saves the Google profile and refreshes the theme', async () => {
-    jest.mocked(signInWithGoogle).mockResolvedValue(profile);
+    jest.mocked(googleAuthGateway.signIn).mockResolvedValue(profile);
     jest.mocked(userRepository.loginWithGoogle).mockReturnValue(user);
     const {result} = await renderHook(() => useGoogleSignIn(), {wrapper});
 
@@ -73,8 +67,8 @@ describe('useGoogleSignIn', () => {
 
   it('returns undefined when the account picker is cancelled', async () => {
     jest
-      .mocked(signInWithGoogle)
-      .mockRejectedValue(new GoogleSignInCancelledError());
+      .mocked(googleAuthGateway.signIn)
+      .mockRejectedValue(new SignInCancelledError());
     const {result} = await renderHook(() => useGoogleSignIn(), {wrapper});
 
     let signedIn: User | undefined;
@@ -89,7 +83,7 @@ describe('useGoogleSignIn', () => {
 
   it('rethrows unexpected sign-in failures', async () => {
     const failure = new Error('network');
-    jest.mocked(signInWithGoogle).mockRejectedValue(failure);
+    jest.mocked(googleAuthGateway.signIn).mockRejectedValue(failure);
     const {result} = await renderHook(() => useGoogleSignIn(), {wrapper});
 
     await expect(

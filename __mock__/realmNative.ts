@@ -1,4 +1,4 @@
-// Constructor stand-in so src/database/realm.ts can be loaded without the native module.
+// Constructor stand-in so src/data/local/realm.ts can be loaded without the native module.
 
 type RealmConfig = {
   schema: {name: string}[];

@@ -1,9 +1,7 @@
-import type {Category} from '../shared/data/categories';
-
 export type AddExpenseValues = {
   title: string;
   amount: string;
-  category?: Category;
+  category?: {id: string};
 };
 
 export type AddExpenseErrors = {

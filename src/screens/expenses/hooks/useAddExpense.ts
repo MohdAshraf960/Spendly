@@ -1,11 +1,14 @@
 import {useCallback, useState} from 'react';
-import {expenseRepository} from '../../../repositories/expenseRepository';
-import type {Expense, CreateExpenseInput} from '../../../types/expense';
+import {addExpense as saveExpense} from '../../../composition';
+import type {Expense} from '../../../domain/entities';
 import type {Category} from '../../../shared/data/categories';
 
-
-export type AddExpenseInput = Omit<CreateExpenseInput, 'category'> & {
+export type AddExpenseInput = {
+  title: string;
+  amount: number;
   category: Category;
+  date: Date;
+  note: string;
 };
 
 const toStoredCategory = (category: Category) => ({
@@ -15,14 +18,13 @@ const toStoredCategory = (category: Category) => ({
   imagePath: category.imagePath,
 });
 
-// Maps the form category (with image) to the stored category fields.
 const useAddExpense = () => {
   const [saving, setSaving] = useState(false);
 
   const addExpense = useCallback((input: AddExpenseInput): Expense => {
     setSaving(true);
     try {
-      return expenseRepository.add({
+      return saveExpense({
         title: input.title,
         amount: input.amount,
         date: input.date,

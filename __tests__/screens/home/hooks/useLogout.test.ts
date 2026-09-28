@@ -1,7 +1,7 @@
 import {act, renderHook} from '@testing-library/react-native';
 import React, {type ReactNode} from 'react';
 import {resetMockRealm} from '../../../../__mock__/realm';
-import {userRepository} from '../../../../src/repositories';
+import {userRepository} from '../../../../src/data/repositories';
 import useLogout from '../../../../src/screens/home/hooks/useLogout';
 import {ThemeProvider} from '../../../../src/shared/context';
 

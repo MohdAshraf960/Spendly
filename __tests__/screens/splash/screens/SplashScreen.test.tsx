@@ -1,7 +1,7 @@
 import {act, screen} from '@testing-library/react-native';
 import {resetMockRealm} from '../../../../__mock__/realm';
 import type {RootStackScreenProps} from '../../../../src/navigation/types';
-import {userRepository} from '../../../../src/repositories';
+import {userRepository} from '../../../../src/data/repositories';
 import SplashScreen from '../../../../src/screens/splash/screens/SplashScreen';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 

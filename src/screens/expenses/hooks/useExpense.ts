@@ -1,8 +1,6 @@
 import {useMemo} from 'react';
-import {expenseRepository} from '../../../repositories/expenseRepository';
+import {getExpense} from '../../../composition';
 
-// Loads one expense for the edit screen. Missing id returns undefined.
-const useExpense = (id?: string) =>
-  useMemo(() => (id ? expenseRepository.getById(id) : undefined), [id]);
+const useExpense = (id?: string) => useMemo(() => getExpense(id), [id]);
 
 export default useExpense;

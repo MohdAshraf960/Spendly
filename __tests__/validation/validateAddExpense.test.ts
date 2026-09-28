@@ -2,7 +2,7 @@ import type {Category} from '../../src/shared/data/categories';
 import {
   hasAddExpenseErrors,
   validateAddExpense,
-} from '../../src/validation/validateAddExpense';
+} from '../../src/domain/usecases/validateAddExpense';
 
 const groceries: Category = {
   id: 'groceries',

@@ -1,9 +1,8 @@
 import {useEffect} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import type {RootStackScreenProps} from '../../../navigation/types';
+import {restoreSession} from '../../../composition';
 import {usePageStyle} from '../../../shared/hooks';
-import {userRepository} from '../../../repositories';
-import {refreshGoogleSession} from '../../../services';
 import {spacing, typography} from '../../../shared/theme';
 import {useTheme} from '../../../shared/context';
 
@@ -22,22 +21,14 @@ const SplashScreen = ({navigation}: RootStackScreenProps<'Splash'>) => {
       setTimeout(() => resolve(), MIN_BRAND_HOLD_MS),
     );
 
-    const refresh = async () => {
-      if (!userRepository.getCurrent()) {
-        return;
-      }
-      const profile = await refreshGoogleSession();
-      if (profile) {
-        userRepository.updateSessionTokens(profile.idToken);
-      }
-    };
-
-    Promise.all([minHold, refresh().catch(() => undefined)]).then(() => {
-      if (cancelled) {
-        return;
-      }
-      navigation.replace(userRepository.getCurrent() ? 'Home' : 'Login');
-    });
+    Promise.all([minHold, restoreSession().catch(() => undefined)]).then(
+      ([, user]) => {
+        if (cancelled) {
+          return;
+        }
+        navigation.replace(user ? 'Home' : 'Login');
+      },
+    );
 
     return () => {
       cancelled = true;

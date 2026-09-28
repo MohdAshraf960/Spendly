@@ -7,7 +7,7 @@ import {useTheme} from '../../../shared/context';
 import {isIncomeCategory} from '../../../shared/data/categories';
 import {formatInr} from '../../../shared/utils/formatCurrency';
 import {formatExpenseShortDate} from '../../../shared/utils/formatDate';
-import type {Expense} from '../../../types';
+import type {Expense} from '../../../domain/entities';
 
 export type DeleteExpenseSheetProps = {
   expense?: Expense;

@@ -1,10 +1,9 @@
 import {useCallback} from 'react';
-import {expenseRepository} from '../../../repositories/expenseRepository';
+import {deleteExpense as removeExpense} from '../../../composition';
 
-// Home confirm sheet calls this after the user accepts delete.
 export const useDeleteExpense = () => {
   const deleteExpense = useCallback((id: string) => {
-    expenseRepository.delete(id);
+    removeExpense(id);
   }, []);
 
   return {deleteExpense};

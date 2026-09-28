@@ -1,10 +1,11 @@
-import {getRealm} from '../database/realm';
+import {getRealm} from '../local/realm';
+import type {ExpenseRepository} from '../../domain/repositories/expenseRepository';
 import type {
   CreateExpenseInput,
   Expense,
   ExpenseQuery,
   StoredCategory,
-} from '../types/expense';
+} from '../../domain/entities/expense';
 
 type RealmCategory = {
   id: string;
@@ -23,7 +24,6 @@ type RealmExpense = {
   createdAt: Date;
 };
 
-// Copies Realm objects into plain JS so list screens can render safely.
 const createId = () =>
   `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`;
 
@@ -89,8 +89,7 @@ const queryExpenses = (query: ExpenseQuery = {}) => {
   return results.sorted('createdAt', true);
 };
 
-// Offline ledger writes. Home subscribes so new saves appear immediately.
-export class ExpenseRepository {
+export class RealmExpenseRepository implements ExpenseRepository {
   add(input: CreateExpenseInput): Expense {
     const realm = getRealm();
     const createdAt = new Date();
@@ -165,7 +164,6 @@ export class ExpenseRepository {
     return queryExpenses(query).map(toExpense);
   }
 
-  // Realm fires immediately and on every write. Caller must unsubscribe.
   subscribe(
     onChange: (expenses: Expense[]) => void,
     query: ExpenseQuery = {},
@@ -183,4 +181,4 @@ export class ExpenseRepository {
   }
 }
 
-export const expenseRepository = new ExpenseRepository();
+export const expenseRepository = new RealmExpenseRepository();

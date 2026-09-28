@@ -26,7 +26,7 @@ import {
   hasAddExpenseErrors,
   validateAddExpense,
   type AddExpenseErrors,
-} from '../../../validation';
+} from '../../../composition';
 
 export type ExpenseFormValues = {
   title: string;

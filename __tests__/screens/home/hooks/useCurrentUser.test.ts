@@ -1,6 +1,6 @@
 import {renderHook} from '@testing-library/react-native';
 import {resetMockRealm} from '../../../../__mock__/realm';
-import {userRepository} from '../../../../src/repositories';
+import {userRepository} from '../../../../src/data/repositories';
 import useCurrentUser from '../../../../src/screens/home/hooks/useCurrentUser';
 
 describe('useCurrentUser', () => {

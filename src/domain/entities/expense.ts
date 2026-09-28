@@ -1,4 +1,4 @@
-import type {StoredCategory} from '../shared/data/categories';
+import type {StoredCategory} from './category';
 
 export type {StoredCategory};
 
@@ -13,7 +13,7 @@ export type Expense = {
   createdAt: Date;
 };
 
-// Realm list query. Dates are applied inclusive of the selected day.
+// List query. Dates are applied inclusive of the selected day.
 export type ExpenseQuery = {
   search?: string;
   categoryIds?: string[];

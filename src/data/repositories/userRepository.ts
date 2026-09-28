@@ -1,5 +1,6 @@
-import {getRealm} from '../database/realm';
-import type {GoogleProfile, ThemePreference, User} from '../types/user';
+import {getRealm} from '../local/realm';
+import type {UserRepository} from '../../domain/repositories/userRepository';
+import type {GoogleProfile, ThemePreference, User} from '../../domain/entities/user';
 
 type RealmUser = {
   _id: string;
@@ -12,7 +13,6 @@ type RealmUser = {
   createdAt: Date;
 };
 
-// One local session at a time. Login replaces the previous user row.
 const CURRENT_USER_ID = 'current';
 
 const toUser = (user: RealmUser): User => ({
@@ -26,8 +26,7 @@ const toUser = (user: RealmUser): User => ({
   createdAt: new Date(user.createdAt),
 });
 
-export class UserRepository {
-  // Single-row session. Splash and Home read this.
+export class RealmUserRepository implements UserRepository {
   getCurrent(): User | undefined {
     const user = getRealm().objectForPrimaryKey<RealmUser>(
       'User',
@@ -36,7 +35,6 @@ export class UserRepository {
     return user ? toUser(user) : undefined;
   }
 
-  // Google session. Stores the profile and latest ID token.
   loginWithGoogle(profile: GoogleProfile): User {
     return this.createSession({
       email: profile.email,
@@ -48,7 +46,6 @@ export class UserRepository {
     });
   }
 
-  // Refreshes only the stored ID token for the active session (silent refresh).
   updateSessionTokens(idToken?: string) {
     const realm = getRealm();
     const existing = realm.objectForPrimaryKey<RealmUser>(
@@ -63,7 +60,6 @@ export class UserRepository {
     });
   }
 
-  // Persists the user's explicit theme choice so it survives restarts.
   updateThemePreference(pref: ThemePreference) {
     const realm = getRealm();
     const existing = realm.objectForPrimaryKey<RealmUser>(
@@ -78,12 +74,22 @@ export class UserRepository {
     });
   }
 
-  // Clears the whole Realm so the next login starts with an empty ledger.
   logout() {
     const realm = getRealm();
     realm.write(() => {
       realm.deleteAll();
     });
+  }
+
+  subscribe(onChange: (user: User | undefined) => void) {
+    const results = getRealm().objects<RealmUser>('User');
+    const listener = () => {
+      onChange(this.getCurrent());
+    };
+    results.addListener(listener);
+    return () => {
+      results.removeListener(listener);
+    };
   }
 
   private createSession(record: Omit<RealmUser, '_id'>): User {
@@ -100,5 +106,4 @@ export class UserRepository {
   }
 }
 
-export const userRepository = new UserRepository();
-
+export const userRepository = new RealmUserRepository();

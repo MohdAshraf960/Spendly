@@ -1,11 +1,14 @@
 import {useCallback, useState} from 'react';
-import {expenseRepository} from '../../../repositories/expenseRepository';
-import type {Expense, CreateExpenseInput} from '../../../types/expense';
+import {updateExpense as saveExpense} from '../../../composition';
+import type {Expense} from '../../../domain/entities';
 import type {Category} from '../../../shared/data/categories';
 
-
-export type UpdateExpenseInput = Omit<CreateExpenseInput, 'category'> & {
+export type UpdateExpenseInput = {
+  title: string;
+  amount: number;
   category: Category;
+  date: Date;
+  note: string;
 };
 
 const toStoredCategory = (category: Category) => ({
@@ -15,7 +18,6 @@ const toStoredCategory = (category: Category) => ({
   imagePath: category.imagePath,
 });
 
-// Updates an existing ledger row. Throws if the id is missing.
 const useUpdateExpense = () => {
   const [saving, setSaving] = useState(false);
 
@@ -23,7 +25,7 @@ const useUpdateExpense = () => {
     (id: string, input: UpdateExpenseInput): Expense | undefined => {
       setSaving(true);
       try {
-        const updated = expenseRepository.update(id, {
+        const updated = saveExpense(id, {
           title: input.title,
           amount: input.amount,
           date: input.date,

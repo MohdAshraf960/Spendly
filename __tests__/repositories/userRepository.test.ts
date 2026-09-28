@@ -1,6 +1,6 @@
 import {resetMockRealm} from '../../__mock__/realm';
-import {expenseRepository, userRepository} from '../../src/repositories';
-import type {GoogleProfile} from '../../src/types/user';
+import {expenseRepository, userRepository} from '../../src/data/repositories';
+import type {GoogleProfile} from '../../src/domain/entities';
 
 const profile: GoogleProfile = {
   googleId: 'google-1',

@@ -19,12 +19,12 @@ import {EmptyState, FeedbackDialog} from '../../../shared/components';
 import {layout, radius, shadows, sizes, spacing, typography} from '../../../shared/theme';
 import {useTheme} from '../../../shared/context';
 import {formatInrCompact} from '../../../shared/utils/formatCurrency';
+import type {Expense} from '../../../domain/entities';
 import {
   EMPTY_HOME_FILTERS,
   hasActiveHomeFilters,
-  type Expense,
   type HomeFilters,
-} from '../../../types';
+} from '../homeFilters';
 import DeleteExpenseSheet from '../components/DeleteExpenseSheet';
 import LogoutConfirmSheet from '../components/LogoutConfirmSheet';
 import ExpenseListItem from '../components/ExpenseListItem';

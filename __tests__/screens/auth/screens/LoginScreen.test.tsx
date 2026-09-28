@@ -2,7 +2,7 @@ import {fireEvent, screen} from '@testing-library/react-native';
 import type {RootStackScreenProps} from '../../../../src/navigation/types';
 import LoginScreen from '../../../../src/screens/auth/screens/LoginScreen';
 import useGoogleSignIn from '../../../../src/screens/auth/hooks/useGoogleSignIn';
-import type {User} from '../../../../src/types';
+import type {User} from '../../../../src/domain/entities';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 
 jest.mock('../../../../src/screens/auth/hooks/useGoogleSignIn', () => ({

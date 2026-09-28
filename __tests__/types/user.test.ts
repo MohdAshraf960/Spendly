@@ -1,5 +1,4 @@
-import type {GoogleProfile, User} from '../../src/types';
-import type {ThemePreference} from '../../src/types/user';
+import type {GoogleProfile, ThemePreference, User} from '../../src/domain/entities';
 
 const preferences: ThemePreference[] = ['light', 'dark', 'system'];
 

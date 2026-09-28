@@ -1,6 +1,6 @@
 import {resetMockRealm} from '../../__mock__/realm';
-import {expenseRepository} from '../../src/repositories';
-import type {CreateExpenseInput} from '../../src/types/expense';
+import {expenseRepository} from '../../src/data/repositories';
+import type {CreateExpenseInput} from '../../src/domain/entities';
 
 const food = {
   id: 'food',

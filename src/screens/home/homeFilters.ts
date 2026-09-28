@@ -1,11 +1,4 @@
-// Overview cards. Totals are spending only; count is all records.
-export type HomeStats = {
-  allTimeTotal: number;
-  thisMonthTotal: number;
-  transactionCount: number;
-};
-
-// Home filter sheet state. Date bounds are applied in the Realm query.
+// Home filter sheet state. Date bounds are applied in the expense query.
 export type HomeFilters = {
   categoryIds: string[];
   fromDate?: Date;

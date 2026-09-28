@@ -1,6 +1,6 @@
 import {fireEvent, screen} from '@testing-library/react-native';
 import DeleteExpenseSheet from '../../../../src/screens/home/components/DeleteExpenseSheet';
-import type {Expense} from '../../../../src/types';
+import type {Expense} from '../../../../src/domain/entities';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 
 const expense: Expense = {

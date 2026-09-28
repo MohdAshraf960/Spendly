@@ -10,7 +10,7 @@ const realmConfig: Realm.Configuration = {
 
 let realm: Realm | undefined;
 
-// Reuse one open instance so writes from hooks stay in sync.
+// Reuse one open instance so writes stay in sync.
 export const getRealm = () => {
   if (!realm || realm.isClosed) {
     realm = new Realm(realmConfig);

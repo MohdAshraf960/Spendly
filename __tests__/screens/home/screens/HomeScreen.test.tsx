@@ -1,7 +1,7 @@
 import {fireEvent, screen} from '@testing-library/react-native';
 import {resetMockRealm} from '../../../../__mock__/realm';
 import type {RootStackScreenProps} from '../../../../src/navigation/types';
-import {expenseRepository, userRepository} from '../../../../src/repositories';
+import {expenseRepository, userRepository} from '../../../../src/data/repositories';
 import HomeScreen from '../../../../src/screens/home/screens/HomeScreen';
 import {renderWithTheme} from '../../../test/renderWithTheme';
 

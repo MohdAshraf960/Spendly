@@ -1,6 +1,6 @@
 import {act, renderHook} from '@testing-library/react-native';
 import {resetMockRealm} from '../../../../__mock__/realm';
-import {expenseRepository} from '../../../../src/repositories';
+import {expenseRepository} from '../../../../src/data/repositories';
 import useAddExpense from '../../../../src/screens/expenses/hooks/useAddExpense';
 import useDeleteExpense from '../../../../src/screens/expenses/hooks/useDeleteExpense';
 import useExpense from '../../../../src/screens/expenses/hooks/useExpense';

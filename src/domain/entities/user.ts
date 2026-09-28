@@ -1,7 +1,7 @@
 // The three theme choices: follow device, or force a specific mode.
 export type ThemePreference = 'light' | 'dark' | 'system';
 
-// App-facing user shape. Realm uses `_id`; we expose `id`.
+// App-facing user shape. Persistence uses `_id`; we expose `id`.
 export type User = {
   id: string;
   email: string;
@@ -15,7 +15,7 @@ export type User = {
   createdAt: Date;
 };
 
-// Normalised profile returned by the Google Sign-In SDK.
+// Normalised profile returned by the auth gateway.
 export type GoogleProfile = {
   googleId: string;
   email: string;

@@ -1,8 +1,9 @@
 import {act, renderHook} from '@testing-library/react-native';
 import {resetMockRealm} from '../../../../__mock__/realm';
-import {expenseRepository} from '../../../../src/repositories';
-import {getHomeStats, useLedgerStats} from '../../../../src/screens/home/hooks/useHomeStats';
-import type {Expense} from '../../../../src/types';
+import {expenseRepository} from '../../../../src/data/repositories';
+import type {Expense} from '../../../../src/domain/entities';
+import {getLedgerStats} from '../../../../src/domain/usecases/getLedgerStats';
+import {useLedgerStats} from '../../../../src/screens/home/hooks/useHomeStats';
 
 const expense = (
   overrides: Partial<Expense> = {},
@@ -22,7 +23,7 @@ const expense = (
   ...overrides,
 });
 
-describe('getHomeStats', () => {
+describe('getLedgerStats', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-09-23T12:00:00'));
@@ -33,7 +34,7 @@ describe('getHomeStats', () => {
   });
 
   it('sums spending, keeps income out of totals, and counts every row', () => {
-    const stats = getHomeStats([
+    const stats = getLedgerStats([
       expense({id: '1', amount: 40}),
       expense({
         id: '2',

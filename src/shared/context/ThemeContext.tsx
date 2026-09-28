@@ -7,11 +7,14 @@ import {
   type ReactNode,
 } from 'react';
 import {useColorScheme} from 'react-native';
+import {
+  getCurrentUser,
+  subscribeToCurrentUser,
+  updateThemePreference,
+} from '../../composition';
+import type {ThemePreference} from '../../domain/entities';
 import {darkColors, lightColors} from '../theme/colors';
 import type {Colors} from '../theme/colors';
-import {getRealm} from '../../database/realm';
-import {userRepository} from '../../repositories';
-import type {ThemePreference} from '../../types/user';
 
 // ─── Context shape ────────────────────────────────────────────────────────────
 
@@ -65,41 +68,26 @@ export const ThemeProvider = ({children}: ThemeProviderProps) => {
   // Seed from Realm on mount so the right palette is applied before first paint.
   const [themePreference, setThemePreferenceState] =
     useState<ThemePreference | null>(() => {
-      const user = userRepository.getCurrent();
-      return (user?.themePreference as ThemePreference | undefined) ?? null;
+      const user = getCurrentUser();
+      return user?.themePreference ?? null;
     });
 
   const refreshThemePreference = useCallback(() => {
-    const user = userRepository.getCurrent();
-    setThemePreferenceState(
-      (user?.themePreference as ThemePreference | undefined) ?? null,
-    );
+    const user = getCurrentUser();
+    setThemePreferenceState(user?.themePreference ?? null);
   }, []);
 
   const resetThemePreference = useCallback(() => {
     setThemePreferenceState(null);
   }, []);
 
-  // Listen to Realm changes so logging in or out automatically updates the theme.
-  useEffect(() => {
-    try {
-      const realm = getRealm();
-      const users = realm.objects('User');
-      const listener = () => {
-        refreshThemePreference();
-      };
-      users.addListener(listener);
-      return () => {
-        users.removeListener(listener);
-      };
-    } catch {
-      // Fallback if database is closed or unavailable.
-    }
-  }, [refreshThemePreference]);
+  useEffect(() => subscribeToCurrentUser(refreshThemePreference), [
+    refreshThemePreference,
+  ]);
 
   const setThemePreference = useCallback((pref: ThemePreference) => {
     setThemePreferenceState(pref);
-    userRepository.updateThemePreference(pref);
+    updateThemePreference(pref);
   }, []);
 
   const isDark = resolveIsDark(themePreference, systemScheme);

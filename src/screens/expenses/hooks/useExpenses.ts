@@ -1,8 +1,7 @@
 import {useEffect, useState} from 'react';
-import {expenseRepository} from '../../../repositories/expenseRepository';
-import type {Expense, ExpenseQuery} from '../../../types/expense';
+import {getExpenses, subscribeToExpenses} from '../../../composition';
+import type {Expense, ExpenseQuery} from '../../../domain/entities';
 
-// Live Realm query for Home. Search and filters run in the database.
 const toErrorMessage = (error: unknown) =>
   error instanceof Error
     ? error.message
@@ -26,9 +25,9 @@ const useExpenses = (query: ExpenseQuery = {}) => {
 
     setLoading(true);
     try {
-      setExpenses(expenseRepository.getLatestFirst(nextQuery));
+      setExpenses(getExpenses(nextQuery));
       setError(undefined);
-      return expenseRepository.subscribe(next => {
+      return subscribeToExpenses(next => {
         try {
           setExpenses(next);
           setError(undefined);

@@ -1,9 +1,9 @@
+import type {HomeStats} from '../../src/domain/entities';
 import {
   EMPTY_HOME_FILTERS,
   hasActiveHomeFilters,
   type HomeFilters,
-  type HomeStats,
-} from '../../src/types';
+} from '../../src/screens/home/homeFilters';
 
 describe('HomeStats', () => {
   it('tracks all-time spend, this month, and the record count', () => {

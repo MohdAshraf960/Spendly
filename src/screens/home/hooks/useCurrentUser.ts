@@ -1,7 +1,6 @@
 import {useMemo} from 'react';
-import {userRepository} from '../../../repositories/userRepository';
+import {getCurrentUser} from '../../../composition';
 
-// Snapshot of the session user for the current Home visit.
-const useCurrentUser = () => useMemo(() => userRepository.getCurrent(), []);
+const useCurrentUser = () => useMemo(() => getCurrentUser(), []);
 
 export default useCurrentUser;

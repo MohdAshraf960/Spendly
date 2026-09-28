@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler/jestSetup';
 
 // ThemeProvider and repositories share one in-memory Realm. See __mock__/realm.ts.
-jest.mock('./src/database/realm', () => require('./__mock__/realm'));
+jest.mock('./src/data/local/realm', () => require('./__mock__/realm'));
 
 jest.mock(
   '@env',
